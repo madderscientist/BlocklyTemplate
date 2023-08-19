@@ -24,10 +24,28 @@ function setCodeTitle(newTitle) {
             wheel: true
         }
     });
+    // 变量插件 必须先<script src="./core/lexicalVariable.js">
     LexicalVariables.init(workspace);
+
+    // 背包插件 必须先<script src="./core/backpack.js">
+    const backpack = new Backpack(workspace, {
+        allowEmptyBackpackOpen: true,
+        useFilledBackpackImage: true,
+        contextMenu: {
+            emptyBackpack: true,
+            removeFromBackpack: true,
+            copyToBackpack: true,
+            copyAllToBackpack: false,
+            pasteAllToBackpack: false,
+            disablePreconditionChecks: false
+        },
+    });   // 必须在加载workspace内的块(比如load)前调用
+    backpack.init();    // backpack有个bug，看backpack文件夹下的README
+
     // 加载untitled项目（默认项目）
     setCodeTitle('untitled');
     load(workspace, codeTitle);
+
     // 绑定全局事件
     workspace.addChangeListener((e) => {    // 自动保存
         if (e.isUiEvent) return;    // UI events are things like scrolling, zooming, etc. No need to save after one of these.
@@ -147,9 +165,9 @@ function exportCode() {
 }
 
 function uploaded(files) {
-    if(typeof files!='object') return;
+    if (typeof files != 'object') return;
     let lastfile = true;
-    for(let i = 0; i<files.length; i++){
+    for (let i = 0; i < files.length; i++) {
         if (files[i].type == 'application/json') {
             let fileName = files[i].name.slice(0, -5);
             let blockName = fileName;
@@ -162,7 +180,7 @@ function uploaded(files) {
                 reader.readAsText(files[i]);
                 reader.onload = function () {
                     window.localStorage?.setItem(blockName, this.result);
-                    if(lastfile) {
+                    if (lastfile) {
                         setCodeTitle(blockName);
                         load(workspace, codeTitle);
                         lastfile = false;
