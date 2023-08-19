@@ -1,0 +1,31 @@
+{
+  "name": "blockly-template",
+  "version": "1.0.0",
+  "homepage": "https://github.com/madderscientist",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --mode production",
+    "start": "webpack serve --open --mode development"
+  },
+  "keywords": [
+    "blockly"
+  ],
+  "author": "beshar",
+  "dependencies": {
+    "@mit-app-inventor/blockly-block-lexical-variables": "^0.0.13",
+    "blockly": "^10.1.1"
+  },
+  "devDependencies": {
+    "copy-webpack-plugin": "^11.0.0",
+    "css-loader": "^6.8.1",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.5.3",
+    "source-map-loader": "^4.0.1",
+    "style-loader": "^3.3.3",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  }
+}
