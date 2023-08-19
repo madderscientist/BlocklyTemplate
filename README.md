@@ -1,5 +1,6 @@
 # Blockly Template
 [Google Blockly](https://github.com/google/blockly) project template | 谷歌Blockly项目模板<br>
+→→[demo | 示例](https://madderscientist.github.io/BlocklyTemplate/blocklyTemplate_web/)←←
 
 ## folder explanation
 - **blocklyTemplate_web**: blockly project using unpkg. Compared with offical samples, I enriched its functionality and add detailed guidance which helps developers quickly customize their own blockly project. I also packed an useful plugin called ["lexicalVariable"](https://github.com/mit-cml/blockly-plugins/tree/main/block-lexical-variables), which makes my template powerful and more userfriendly.
