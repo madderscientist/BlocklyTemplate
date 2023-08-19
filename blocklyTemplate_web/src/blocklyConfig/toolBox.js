@@ -397,10 +397,6 @@ const toolbox = {
                 },
                 {
                     "kind": "block",
-                    "type": "text_create_join_item"
-                },
-                {
-                    "kind": "block",
                     "type": "text_append",
                     "inputs": {
                         "TEXT": {
