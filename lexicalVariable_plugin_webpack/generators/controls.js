@@ -104,4 +104,12 @@ import * as Blockly from 'blockly/core';
     code += 'for (let ' + indexVar + ' in ' + listVar + ') {\n' + branch + '}\n';
     return code;
   };
+
+  javascriptGenerator['controls_do_then_return'] = function(block) {
+    const doWhat = javascriptGenerator.statementToCode(block, 'STM') || '';
+    const returnWhat = javascriptGenerator.valueToCode(block, 'VALUE',
+        javascriptGenerator.ORDER_NONE) || '';
+    const code = `(()=>{\n${doWhat}\treturn ${returnWhat};\n})()`
+    return [code, javascriptGenerator.ORDER_ATOMIC];
+  };
 })();

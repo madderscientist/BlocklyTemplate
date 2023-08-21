@@ -34,6 +34,16 @@ import * as Blockly from 'blockly/core';
 })();
 ```
 
+3. 补上controls_do_then_return的代码生成
+```js
+javascriptGenerator['controls_do_then_return'] = function(block) {
+  const doWhat = javascriptGenerator.statementToCode(block, 'STM') || '';
+  const returnWhat = javascriptGenerator.valueToCode(block, 'VALUE',
+      javascriptGenerator.ORDER_NONE) || '';
+  const code = `(()=>{\n${doWhat}\treturn ${returnWhat};\n})()`
+  return [code, javascriptGenerator.ORDER_ATOMIC];
+};
+```
 ### 2. webpack配置
 遗憾的是，unpkg版本的blockly不能用es6 import。意味着我不能在打包前运行代码。但是我猜，打包一部分必然不会检查整个项目能否运行。果不其然。所以我只要在webpack配置中明确输入和输出就好了。<br>
 输入是blockly库，用external将其排除在打包范围外，同时命名和unpkg版本一致：
