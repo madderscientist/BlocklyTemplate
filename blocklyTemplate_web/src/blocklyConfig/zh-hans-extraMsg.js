@@ -19,3 +19,4 @@ Blockly.Msg["LISTS_ISARRAY"] = "是否为列表";
 Blockly.Msg["LISTS_PUSH"] = "在列表%1尾部插入";
 Blockly.Msg["LISTS_CONCAT"] = "连接列表";
 Blockly.Msg["LISTS_SPLICE"] = "于列表%1位置%2删除元素数目%3并添加如下元素";
+Blockly.Msg["PROCEDURE_GET"] = "取函数 函数名%1"

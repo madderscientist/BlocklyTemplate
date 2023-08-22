@@ -273,3 +273,62 @@ var code = 'var ' + listVar + ' = ' + arg0 + ';\n';
 ```js
 generator.nameDB_.getName(block.getFieldValue('可能非法的变量名'), Blockly.Names.NameType.VARIABLE);
 ```
+
+## 关于动态类别
+因为需要向动态类别：PROCEDURE中添加自己的块，所以有必要看看源码怎么做的：
+```js
+function a(workspace) {
+    function b(f, Type) {
+        for (let k = 0; k < f.length; k++) {
+            var h = f[k][0];
+            const l = f[k][1];
+            const n = $.createElement$$module$build$src$core$utils$xml("block");
+            n.setAttribute("type", Type);
+            n.setAttribute("gap", "16");
+            const m = $.createElement$$module$build$src$core$utils$xml("mutation");
+            m.setAttribute("name", h);
+            n.appendChild(m);
+            for (h = 0; h < l.length; h++) {
+                const p = $.createElement$$module$build$src$core$utils$xml("arg");
+                p.setAttribute("name", l[h]);
+                m.appendChild(p)
+            }
+            c.push(n)
+        }
+    }
+    const c = [];
+    if (Blocks$$module$build$src$core$blocks.procedures_defnoreturn) {
+        var d = $.createElement$$module$build$src$core$utils$xml("block");
+        d.setAttribute("type", "procedures_defnoreturn");
+        d.setAttribute("gap", "16");
+        var e = $.createElement$$module$build$src$core$utils$xml("field");
+        e.setAttribute("name", "NAME");
+        e.appendChild($.createTextNode$$module$build$src$core$utils$xml($.Msg$$module$build$src$core$msg.PROCEDURES_DEFNORETURN_PROCEDURE));
+        d.appendChild(e);
+        c.push(d)
+    }
+    Blocks$$module$build$src$core$blocks.procedures_defreturn && (
+        d = $.createElement$$module$build$src$core$utils$xml("block"),
+        d.setAttribute("type", "procedures_defreturn"),
+        d.setAttribute("gap", "16"),
+        e = $.createElement$$module$build$src$core$utils$xml("field"),
+        e.setAttribute("name", "NAME"),
+        e.appendChild($.createTextNode$$module$build$src$core$utils$xml($.Msg$$module$build$src$core$msg.PROCEDURES_DEFRETURN_PROCEDURE)),
+        d.appendChild(e),
+        c.push(d)
+    );
+    Blocks$$module$build$src$core$blocks.procedures_ifreturn && (
+        d = $.createElement$$module$build$src$core$utils$xml("block"),
+        d.setAttribute("type", "procedures_ifreturn"),
+        d.setAttribute("gap", "16"),
+        c.push(d)
+    );
+    c.length && c[c.length - 1].setAttribute("gap", "24");
+    workspace = allProcedures$$module$build$src$core$procedures(workspace);
+    b(workspace[0], "procedures_callnoreturn");
+    b(workspace[1], "procedures_callreturn");
+    return c
+}
+```
+源码获取方法：console.log(workspace.toolboxCategoryCallbacks.get("PROCEDURE").toString())
+压缩后：Blocks$$module$build$src$core$blocks对应压缩前Blockly.Blocks，$.createElement$$module$build$src$core$utils$xml("block")就是document.createElement("block")

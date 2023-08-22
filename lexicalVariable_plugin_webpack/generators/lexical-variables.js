@@ -1,29 +1,29 @@
 import * as Blockly from 'blockly/core';
 import * as Shared from '../shared.js';
 
+/**
+ * Generate variable name
+ * @param {string} name
+ * @return {string}
+ */
+function getVariableName(name) {
+  const pair = Shared.unprefixName(name);
+  const prefix = pair[0];
+  const unprefixedName = pair[1];
+  if (prefix === Blockly.Msg.LANG_VARIABLES_GLOBAL_PREFIX ||
+      prefix === Shared.GLOBAL_KEYWORD) {
+    return unprefixedName;
+  } else {
+    return (Shared.possiblyPrefixGeneratedVarName(prefix))(unprefixedName);
+  }
+}
+
 ;(function(){
   const javascriptGenerator = Blockly.JavaScript;
   javascriptGenerator['lexical_variable_get'] = function (block) {
     const code = getVariableName(block.getFieldValue('VAR'));
     return [code, javascriptGenerator.ORDER_ATOMIC];
   };
-
-  /**
-   * Generate variable name
-   * @param {string} name
-   * @return {string}
-   */
-  function getVariableName(name) {
-    const pair = Shared.unprefixName(name);
-    const prefix = pair[0];
-    const unprefixedName = pair[1];
-    if (prefix === Blockly.Msg.LANG_VARIABLES_GLOBAL_PREFIX ||
-        prefix === Shared.GLOBAL_KEYWORD) {
-      return unprefixedName;
-    } else {
-      return (Shared.possiblyPrefixGeneratedVarName(prefix))(unprefixedName);
-    }
-  }
 
   /**
    * Generate basic variable setting code.
@@ -82,3 +82,5 @@ import * as Shared from '../shared.js';
     return [code, javascriptGenerator.ORDER_NONE];
   };
 })();
+
+export {getVariableName};

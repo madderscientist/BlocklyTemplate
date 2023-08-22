@@ -30,7 +30,7 @@
     "inputsInline": true,                       // 一行显示 无定义会自动判断
     "tooltip": function(div, block){return String();},    // 或者直接字符串 用函数可以自定义提示样式
     "helpUrl": "https://developers.google.com/blockly/guides/create-custom-blocks/define-blocks?hl=zh-cn#context_menus",
-    "JavaScript": function(block) {
+    "JavaScript": function(block, generator) {          // 对于js，可以用Blockly.JavaScript也可以用generator
         var FieldValue = block.getFieldValue('X');      // 用于输入不是块的，见：https://developers.google.com/blockly/guides/create-custom-blocks/fields/built-in-fields/overview
         var dropdown = block.getFieldValue('END') == 'FIRST' ? 'indexOf' : 'lastIndexOf';   // 下拉菜单的返回值是FIRST之类的通用语言 如果像上面C4那样有两项则返回列表第二项
         var variable = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('VAR'), Blockly.Variables.NAME_TYPE);     // 对于变量下拉列表，为了防止变量名用了关键词，用此方法消除
@@ -47,7 +47,7 @@
 // 点开一个Mutator的执行顺序：decompose saveconnectons compose saveconnectons compose
 // 连接/断开的执行顺序： compose saveConnections
 // 主块指工具箱里那个，而顶层块指主块弹出窗里的大块。子块为弹窗里置于顶层块内的小块
-;(function(){
+; (function () {
     var MutatorTemplate = {
         // JSON初始化方法
         saveExtraState: function () {
@@ -133,43 +133,64 @@
 
     Blockly.Extensions.registerMutator(
         'RenameVar_mutator', {
-            saveExtraState: MutatorTemplate.saveExtraState,
-            loadExtraState: MutatorTemplate.loadExtraState,
-            decompose: function (workspace) {
-                const topBlock = workspace.newBlock('text_create_join_container');
-                topBlock.initSvg();
-                var connection = topBlock.getInput('STACK').connection;
-                for (var i = 0; i < this.itemCount_; i++) {
-                    const itemBlock = workspace.newBlock('text_create_join_item');
-                    itemBlock.initSvg();
-                    connection.connect(itemBlock.previousConnection);
-                    connection = itemBlock.nextConnection;
+        saveExtraState: MutatorTemplate.saveExtraState,
+        loadExtraState: function (state) {
+            this.itemCount_ = state['itemCount'];
+            if(this.lexicalVariableDefined_ == undefined){      // 是否启用lexicalVariable变量系统
+                this.lexicalVariableDefined_ = !Blockly.getMainWorkspace().getToolbox().toolboxDef_.contents.find((x)=>x.custom=="VARIABLE") // 无"custom": "VARIABLE"
+                                                && Boolean(window.LexicalVariables);
+            }
+            this.updateShape_();
+        },
+        decompose: function (workspace) {
+            const topBlock = workspace.newBlock('text_create_join_container');
+            topBlock.initSvg();
+            var connection = topBlock.getInput('STACK').connection;
+            for (var i = 0; i < this.itemCount_; i++) {
+                const itemBlock = workspace.newBlock('text_create_join_item');
+                itemBlock.initSvg();
+                connection.connect(itemBlock.previousConnection);
+                connection = itemBlock.nextConnection;
+            }
+            return topBlock;
+        },
+        compose: MutatorTemplate.compose,
+        saveConnections: MutatorTemplate.saveConnections,
+        updateShape_: function () {
+            if (this.lexicalVariableDefined_) {   // 有LexicalVariables插件的创建
+                for (let i = 0; i < this.itemCount_; i++) {
+                    if (!this.getInput('ADD' + i)) {
+                        let fieldLexicalVariable = new window.LexicalVariables.FieldLexicalVariable(' ');
+                        fieldLexicalVariable.setBlock(this);    // 调用此函数后才能获取局部变量
+                        this.appendValueInput('ADD' + i).setCheck("String").setAlign(Blockly.ALIGN_RIGHT)
+                            .appendField("重命名变量")
+                            .appendField(fieldLexicalVariable, 'VAR' + i)
+                            .appendField("为");
+                        this.moveInputBefore('ADD' + i, "js");
+                    }
                 }
-                return topBlock;
-            },
-            compose: MutatorTemplate.compose,
-            saveConnections: MutatorTemplate.saveConnections,
-            updateShape_: function(){
+            } else {    // 无LexicalVariables插件的创建
+                if (!Blockly.getMainWorkspace().getAllVariables().length) this.setWarningText("no available variables");
                 for (let i = 0; i < this.itemCount_; i++) {
                     if (!this.getInput('ADD' + i)) {
                         // input代表了连接，而block指整个块，包含前者
-                        this.appendValueInput('ADD' + i).setCheck("TEXT").setAlign(Blockly.ALIGN_RIGHT)
-                        .appendField("重命名变量")
-                        .appendField(new Blockly.FieldTextInput("default"), "NAME")
-                        .appendField(new Blockly.FieldDropdown(function(){
-                            let ops = Blockly.getMainWorkspace().getAllVariables();
-                            return ops.length?ops:[["no variables","null"],["no variable2s","null2"]]
-                        }), 'INLINE')
-                         .appendField(new Blockly.FieldVariable("item"), "var"+i)
-                        this.moveInputBefore('ADD' + i,"js")
+                        this.appendValueInput('ADD' + i).setCheck("String").setAlign(Blockly.ALIGN_RIGHT)
+                            .appendField("重命名变量")
+                            .appendField(new Blockly.FieldDropdown(function () {
+                                let ops = Blockly.getMainWorkspace().getAllVariables();
+                                return ops.length ? Array.from(ops, x => [x.name, x.name]) : [["", ""]];
+                            }), 'VAR' + i)
+                            .appendField("为");
+                        this.moveInputBefore('ADD' + i, "js");
                     }
                 }
-                // Remove deleted inputs.
-                for (let i = this.itemCount_; this.getInput('ADD' + i); i++) {
-                    this.removeInput('ADD' + i);
-                }
             }
-        }, undefined,
+            // Remove deleted inputs.
+            for (let i = this.itemCount_; this.getInput('ADD' + i); i++) {
+                this.removeInput('ADD' + i);
+            }
+        }
+    }, undefined,
         ['text_create_join_item']  // 备选的小块
     );
 })();
@@ -190,8 +211,8 @@
             "nextStatement": null,
             "style": "control_blocks",
             "tooltip": "console.log(x)",
-            "JavaScript": function (block) {
-                let msg = Blockly.JavaScript.valueToCode(block, 'msg', Blockly.JavaScript.ORDER_ATOMIC);
+            "JavaScript": function (block, generator) {
+                let msg = generator.valueToCode(block, 'msg', generator.ORDER_ATOMIC);
                 return `console.log(${msg});\n`;
             }
         }, {
@@ -200,7 +221,8 @@
             "args0": [
                 {
                     "type": "input_value",
-                    "name": "js"
+                    "name": "js",
+                    "align": "RIGHT"
                 }
             ],
             'mutator': "RenameVar_mutator",
@@ -208,9 +230,17 @@
             "nextStatement": null,
             "style": "control_blocks",
             "tooltip": "eval(x)",
-            "JavaScript": function (block) {
-                let msg = Blockly.JavaScript.valueToCode(block, 'js', Blockly.JavaScript.ORDER_ATOMIC);
-                return msg.slice(1, -1);     // msg是一个字符串，文本内容首尾有引号
+            "JavaScript": function (block, generator) {
+                let renames = '';
+                if(block.mutator.sourceBlock.lexicalVariableDefined_) {     // 用console.log(block)找到的属性
+                    for (let i = 0; i < block.inputList.length - 1; i++)
+                        renames += `let ${generator.valueToCode(block, `ADD${i}`, generator.ORDER_ATOMIC).slice(1, -1)} = ${window.LexicalVariables.getVariableName(block.getFieldValue(`VAR${i}`))}\n`;
+                } else {
+                    for (let i = 0; i < block.inputList.length - 1; i++)
+                        renames += `let ${generator.valueToCode(block, `ADD${i}`, generator.ORDER_ATOMIC).slice(1, -1)} = ${generator.nameDB_.getName(block.getFieldValue(`VAR${i}`), Blockly.VARIABLE_CATEGORY_NAME)}\n`;
+                }
+                let js = generator.valueToCode(block, 'js', generator.ORDER_ATOMIC);
+                return `{\n${renames}${eval(js)}\n}\n`;     // 变量js长这样："'line1' + '\n' + 'line2' + ..." 所以用eval合并字符串
             }
         },
         {
@@ -225,9 +255,9 @@
             "output": null,
             "style": "control_blocks",
             "tooltip": "return 'number' or 'object' or 'string'",
-            "JavaScript": function (block) {
-                let obj = Blockly.JavaScript.valueToCode(block, 'obj', Blockly.JavaScript.ORDER_ATOMIC);
-                return [`typeof ${obj}`, Blockly.JavaScript.ORDER_NONE];
+            "JavaScript": function (block, generator) {
+                let obj = generator.valueToCode(block, 'obj', generator.ORDER_ATOMIC);
+                return [`typeof ${obj}`, generator.ORDER_NONE];
             }
         },
         {
@@ -242,9 +272,9 @@
             "output": null,
             "style": "list_blocks",
             "tooltip": "Array.isArray(x)",
-            "JavaScript": function (block) {
-                let obj = Blockly.JavaScript.valueToCode(block, 'obj', Blockly.JavaScript.ORDER_ATOMIC);
-                return [`Array.isArray(${obj})`, Blockly.JavaScript.ORDER_NONE];
+            "JavaScript": function (block, generator) {
+                let obj = generator.valueToCode(block, 'obj', generator.ORDER_ATOMIC);
+                return [`Array.isArray(${obj})`, generator.ORDER_NONE];
             }
         },
         {
@@ -261,13 +291,13 @@
             "style": "list_blocks",
             "tooltip": "Array.push()",
             "inputsInline": false,
-            "JavaScript": function (block) {
-                let l = Blockly.JavaScript.valueToCode(block, 'list', Blockly.JavaScript.ORDER_ATOMIC);
+            "JavaScript": function (block, generator) {
+                let l = generator.valueToCode(block, 'list', generator.ORDER_ATOMIC);
                 let pushes = Array.from({ length: block.inputList.length - 2 }, (_, i) =>
-                    Blockly.JavaScript.valueToCode(block, `ADD${i}`, Blockly.JavaScript.ORDER_ATOMIC)
+                    generator.valueToCode(block, `ADD${i}`, generator.ORDER_ATOMIC)
                 )
                 // 说是push，但要返回Array，就用这个方法代替吧
-                return [`[...${l},${pushes.join(',')}]`, Blockly.JavaScript.ORDER_NONE];
+                return [`[...${l},${pushes.join(',')}]`, generator.ORDER_NONE];
             }
         },
         {
@@ -278,12 +308,12 @@
                     "type": "input_value",
                     "name": "list",
                     "align": "RIGHT"
-                },{
+                }, {
                     "type": "input_value",
                     "name": "at",
                     "align": "RIGHT",
                     "check": "Number"
-                },{
+                }, {
                     "type": "input_value",
                     "name": "deleteNum",
                     "check": "Number",
@@ -296,12 +326,12 @@
             "style": "list_blocks",
             "tooltip": "Array.splice(); 如果删除0则表示不删除，没有添加项则不添加",
             "inputsInline": false,
-            "JavaScript": function (block) {
-                let l = Blockly.JavaScript.valueToCode(block, 'list', Blockly.JavaScript.ORDER_ATOMIC);
-                let at = Blockly.JavaScript.valueToCode(block, 'at', Blockly.JavaScript.ORDER_ATOMIC);
-                let deleteNum = Blockly.JavaScript.valueToCode(block, 'deleteNum', Blockly.JavaScript.ORDER_ATOMIC);
+            "JavaScript": function (block, generator) {
+                let l = generator.valueToCode(block, 'list', generator.ORDER_ATOMIC);
+                let at = generator.valueToCode(block, 'at', generator.ORDER_ATOMIC);
+                let deleteNum = generator.valueToCode(block, 'deleteNum', generator.ORDER_ATOMIC);
                 let adds = Array.from({ length: block.inputList.length - 4 }, (_, i) =>
-                    Blockly.JavaScript.valueToCode(block, `ADD${i}`, Blockly.JavaScript.ORDER_ATOMIC)
+                    generator.valueToCode(block, `ADD${i}`, generator.ORDER_ATOMIC)
                 )
                 return `${l}.splice(${at},${deleteNum}+1,${adds.join(',')});\n`;  // blockly的逻辑是从1开始
             }
@@ -314,12 +344,32 @@
             "style": "list_blocks",
             "tooltip": "Array.concat() 合并列表",
             "inputsInline": false,
-            "JavaScript": function (block) {
+            "JavaScript": function (block, generator) {
                 let lists = Array.from({ length: block.inputList.length - 1 }, (_, i) =>
-                    Blockly.JavaScript.valueToCode(block, `ADD${i}`, Blockly.JavaScript.ORDER_ATOMIC)
+                    generator.valueToCode(block, `ADD${i}`, generator.ORDER_ATOMIC)
                 )
                 // 说是push，但要返回Array，就用这个方法代替吧
-                return [`[...${lists.join(', ...')}]`, Blockly.JavaScript.ORDER_NONE];
+                return [`[...${lists.join(', ...')}]`, generator.ORDER_NONE];
+            }
+        },
+        {
+            "type": "procedure_get",
+            "message0": "%{BKY_PROCEDURE_GET}",
+            "args0": [
+                {
+                    "type": "input_value",
+                    "name": "NAME",
+                    "check": "String"
+                }
+            ],
+            "output": null,
+            "style": "procedure_blocks",
+            "tooltip": "按名字获取函数",
+            "inputsInline": true,
+            "JavaScript": function (block, generator) {
+                let NAME = generator.valueToCode(block, "NAME", generator.ORDER_ATOMIC);    // 注意返回的字符串前后有引号，要删去
+                const funcName = generator.nameDB_.getName(NAME.slice(1, -1), Blockly.PROCEDURE_CATEGORY_NAME);
+                return [funcName, generator.ORDER_NONE];
             }
         }
     ]

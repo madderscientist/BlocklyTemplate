@@ -44,6 +44,19 @@ javascriptGenerator['controls_do_then_return'] = function(block) {
   return [code, javascriptGenerator.ORDER_ATOMIC];
 };
 ```
+
+4. 为procedure改bug
+块“procedures_callreturn”生成代码会报错，说没有toLowerCase这个属性。我猜是getName的时候返回了null，说明没有找到这个。全部注释了这个块的代码生成逻辑，但是依旧报错。于是我**把procedure中所有叫“PROCNAME”的全部换成了“NAME”**，问题解决。<br>
+这个procedure块问题很多，还有：定义必须在所有调用之后删除，不然报错。改成“NAME”后这个问题也被解决了。
+
+5. 暴露更多属性
+在我添加的eval块中，我想使用FieldLexicalVariable的变量选择框，但是需要代码生成，所以在index.js中添加了：
+```js
+export {getVariableName} from './generators/lexical-variables.js';
+export * as WarningHandler from './warningHandler.js';
+```
+
+
 ### 2. webpack配置
 遗憾的是，unpkg版本的blockly不能用es6 import。意味着我不能在打包前运行代码。但是我猜，打包一部分必然不会检查整个项目能否运行。果不其然。所以我只要在webpack配置中明确输入和输出就好了。<br>
 输入是blockly库，用external将其排除在打包范围外，同时命名和unpkg版本一致：

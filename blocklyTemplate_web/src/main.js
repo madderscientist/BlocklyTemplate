@@ -25,7 +25,25 @@ function setCodeTitle(newTitle) {
         }
     });
     // 变量插件 必须先<script src="./core/lexicalVariable.js">
+    // 如果不想用，可以直接将toolbox中的"custom": "VARIABLE"取消注释
     LexicalVariables.init(workspace);
+
+    // 向动态类别"PROCEDURE"添加自定义块
+    let defaultProcedureBlocks = workspace.toolboxCategoryCallbacks.get("PROCEDURE");
+    workspace.registerToolboxCategoryCallback('PROCEDURE',
+        function (workspace) {
+            var c = defaultProcedureBlocks(workspace);
+            c.length && c[c.length - 1].setAttribute("gap", "16");  // defaultProcedureBlocks最后设置了距离，所以还原
+            if(Blockly.Blocks.procedure_get) {
+                let d = document.createElement("block");
+                d.setAttribute("type", "procedure_get");
+                d.setAttribute("gap", "16");
+                c.push(d);
+            }
+            c.length && c[c.length - 1].setAttribute("gap", "24");
+            return c;
+        }
+    );
 
     // 背包插件 必须先<script src="./core/backpack.js">
     const backpack = new Backpack(workspace, {

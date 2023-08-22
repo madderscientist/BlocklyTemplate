@@ -41,6 +41,8 @@ export * from './fields/field_parameter_flydown.js';
 export * from './fields/field_lexical_variable.js';
 export * from './fields/field_nocheck_dropdown.js';
 export * from './fields/field_procedurename.js';
+export {getVariableName} from './generators/lexical-variables.js';
+export * as WarningHandler from './warningHandler.js';
 
 /**
  * @param workspace

@@ -792,7 +792,7 @@ Blockly.Blocks['procedures_callnoreturn'] = {
     this.procDropDown.block = this;
     this.appendDummyInput()
         .appendField(Blockly.Msg['LANG_PROCEDURES_CALLNORETURN_CALL'])
-        .appendField(this.procDropDown, 'PROCNAME');
+        .appendField(this.procDropDown, 'NAME');
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.setTooltip(Blockly.Msg['LANG_PROCEDURES_CALLNORETURN_TOOLTIP']);
@@ -803,29 +803,29 @@ Blockly.Blocks['procedures_callnoreturn'] = {
       {func: WarningHandler.checkIsInDefinition},
       {
         func: WarningHandler.checkDropDownContainsValidValue,
-        dropDowns: ['PROCNAME'],
+        dropDowns: ['NAME'],
       },
     ];
     this.setOnChange(function(changeEvent) {
       WarningHandler.checkErrors(this);
     });
-    // Blockly.FieldProcedure.onChange.call(this.getField("PROCNAME"),
+    // Blockly.FieldProcedure.onChange.call(this.getField("NAME"),
     //     this.procNamesFxn(false)[0][0]);
-    ProcedureUtils.onChange.call(this.getField('PROCNAME'),
-        this.getField('PROCNAME').getValue());
+    ProcedureUtils.onChange.call(this.getField('NAME'),
+        this.getField('NAME').getValue());
   },
   getProcedureCall: function() {
-    return this.getFieldValue('PROCNAME');
+    return this.getFieldValue('NAME');
   },
   renameProcedure: function(oldName, newName) {
     if (!oldName ||
-        Blockly.Names.equals(oldName, this.getFieldValue('PROCNAME'))) {
-      const nameField = this.getField('PROCNAME');
+        Blockly.Names.equals(oldName, this.getFieldValue('NAME'))) {
+      const nameField = this.getField('NAME');
       // Force the options menu to get regenerated since we might be getting
       // called because our defining procedure got renamed and
       // this.setFieldValue() will fail if it's value isn't in the options set
       nameField.getOptions();
-      this.setFieldValue(newName, 'PROCNAME');
+      this.setFieldValue(newName, 'NAME');
     }
   },
   // [lyn, 10/27/13] Renamed "fromChange" parameter to "startTracking", because
@@ -944,7 +944,7 @@ Blockly.Blocks['procedures_callnoreturn'] = {
   mutationToDom: function() {
     // Save the name and arguments (none of which are editable).
     const container = Blockly.utils.xml.createElement('mutation');
-    container.setAttribute('name', this.getFieldValue('PROCNAME'));
+    container.setAttribute('name', this.getFieldValue('NAME'));
     for (let x = 0; this.getInput('ARG' + x); x++) {
       const parameter = Blockly.utils.xml.createElement('arg');
       parameter.setAttribute('name',
@@ -956,7 +956,7 @@ Blockly.Blocks['procedures_callnoreturn'] = {
   domToMutation: function(xmlElement) {
     // Restore the name and parameters.
     const name = xmlElement.getAttribute('name');
-    this.setFieldValue(name, 'PROCNAME');
+    this.setFieldValue(name, 'NAME');
     // [lyn, 10/27/13] Significantly cleaned up this code. Always take arg
     // names from xmlElement. Do not attempt to find definition.
     this.arguments_ = [];
@@ -982,7 +982,7 @@ Blockly.Blocks['procedures_callnoreturn'] = {
     // Add option to find caller.
     const option = {enabled: true};
     option.text = Blockly.Msg['LANG_PROCEDURES_HIGHLIGHT_DEF'];
-    const name = this.getFieldValue('PROCNAME');
+    const name = this.getFieldValue('NAME');
     const workspace = this.workspace;
     option.callback = function() {
       const def = Blockly.Procedures.getDefinition(name, workspace);
@@ -1000,7 +1000,7 @@ Blockly.Blocks['procedures_callnoreturn'] = {
     for (let i = 0; this.getInput('ARG' + i) !== null; i++) {
       this.removeInput('ARG' + i);
     }
-    this.setFieldValue('none', 'PROCNAME');
+    this.setFieldValue('none', 'NAME');
   },
 };
 
@@ -1024,7 +1024,7 @@ Blockly.Blocks['procedures_callreturn'] = {
     this.procDropDown.block = this;
     this.appendDummyInput()
         .appendField(Blockly.Msg['LANG_PROCEDURES_CALLRETURN_CALL'])
-        .appendField(this.procDropDown, 'PROCNAME');
+        .appendField(this.procDropDown, 'NAME');
     this.setOutput(true, null);
     this.setTooltip(Blockly.Msg['LANG_PROCEDURES_CALLRETURN_TOOLTIP']);
     this.arguments_ = [];
@@ -1034,16 +1034,16 @@ Blockly.Blocks['procedures_callreturn'] = {
       {func: WarningHandler.checkIsInDefinition},
       {
         func: WarningHandler.checkDropDownContainsValidValue,
-        dropDowns: ['PROCNAME'],
+        dropDowns: ['NAME'],
       },
     ];
     this.setOnChange(function(changeEvent) {
       WarningHandler.checkErrors(this);
     });
-    // Blockly.FieldProcedure.onChange.call(this.getField("PROCNAME"),
+    // Blockly.FieldProcedure.onChange.call(this.getField("NAME"),
     //     this.procNamesFxn()[0][0]);
-    ProcedureUtils.onChange.call(this.getField('PROCNAME'),
-        this.getField('PROCNAME').getValue());
+    ProcedureUtils.onChange.call(this.getField('NAME'),
+        this.getField('NAME').getValue());
   },
   getProcedureCall: Blockly.Blocks.procedures_callnoreturn.getProcedureCall,
   renameProcedure: Blockly.Blocks.procedures_callnoreturn.renameProcedure,
