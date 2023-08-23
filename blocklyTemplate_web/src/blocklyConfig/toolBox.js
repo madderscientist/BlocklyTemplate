@@ -132,6 +132,10 @@ const toolbox = {
                 },
                 {
                     "kind": "block",
+                    "type": "controls_ignore_return"
+                },
+                {
+                    "kind": "block",
                     "type": "controls_eval",
                     "inputs": {
                         "js": {

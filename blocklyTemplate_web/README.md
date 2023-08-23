@@ -22,3 +22,6 @@ blockly项目模板，使用unpkg。本项目有如下特点：
 
 ## todo
 eval块，整合lexicalVariavle，做异常检测，包括：没选变量，没连字符
+
+## 设计时的权衡
+匿名函数：用定义函数+取函数代替<br>

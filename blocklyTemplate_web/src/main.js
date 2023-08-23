@@ -40,6 +40,26 @@ function setCodeTitle(newTitle) {
                 d.setAttribute("gap", "16");
                 c.push(d);
             }
+            if(Blockly.Blocks.procedure_call_by_name){
+                let d = document.createElement("block");
+                d.setAttribute("type", "procedure_call_by_name");
+                d.setAttribute("gap", "16");
+
+                // 添加默认连接块 仿照xml定义toolbox设置dom
+                let value = document.createElement('value');
+                value.setAttribute("name","PARAMS");
+                d.appendChild(value);
+
+                let listBlock = document.createElement('block');
+                listBlock.setAttribute("type","lists_create_with");
+                value.appendChild(listBlock);
+
+                let mutation = document.createElement('mutation');
+                mutation.setAttribute("items","0");
+                listBlock.appendChild(mutation);
+
+                c.push(d);
+            }
             c.length && c[c.length - 1].setAttribute("gap", "24");
             return c;
         }

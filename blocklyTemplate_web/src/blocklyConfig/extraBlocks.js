@@ -136,9 +136,9 @@
         saveExtraState: MutatorTemplate.saveExtraState,
         loadExtraState: function (state) {
             this.itemCount_ = state['itemCount'];
-            if(this.lexicalVariableDefined_ == undefined){      // 是否启用lexicalVariable变量系统
-                this.lexicalVariableDefined_ = !Blockly.getMainWorkspace().getToolbox().toolboxDef_.contents.find((x)=>x.custom=="VARIABLE") // 无"custom": "VARIABLE"
-                                                && Boolean(window.LexicalVariables);
+            if (this.lexicalVariableDefined_ == undefined) {      // 是否启用lexicalVariable变量系统
+                this.lexicalVariableDefined_ = !Blockly.getMainWorkspace().getToolbox().toolboxDef_.contents.find((x) => x.custom == "VARIABLE") // 无"custom": "VARIABLE"
+                    && Boolean(window.LexicalVariables);
             }
             this.updateShape_();
         },
@@ -232,7 +232,7 @@
             "tooltip": "eval(x)",
             "JavaScript": function (block, generator) {
                 let renames = '';
-                if(block.mutator.sourceBlock.lexicalVariableDefined_) {     // 用console.log(block)找到的属性
+                if (block.mutator.sourceBlock.lexicalVariableDefined_) {     // 用console.log(block)找到的属性
                     for (let i = 0; i < block.inputList.length - 1; i++)
                         renames += `let ${generator.valueToCode(block, `ADD${i}`, generator.ORDER_ATOMIC).slice(1, -1)} = ${window.LexicalVariables.getVariableName(block.getFieldValue(`VAR${i}`))}\n`;
                 } else {
@@ -258,6 +258,25 @@
             "JavaScript": function (block, generator) {
                 let obj = generator.valueToCode(block, 'obj', generator.ORDER_ATOMIC);
                 return [`typeof ${obj}`, generator.ORDER_NONE];
+            }
+        },
+        {
+            "type": "controls_ignore_return",
+            "message0": "%{BKY_CONTROLS_IGNORE_RETURN}",
+            "args0": [
+                {
+                    "type": "input_value",
+                    "name": "run"
+                }
+            ],
+            "previousStatement": null,
+            "nextStatement": null,
+            "style": "control_blocks",
+            "tooltip": "run but ignore the return. Useful when turning a return block to a statement",
+            "JavaScript": function (block, generator) {
+                let codes = generator.valueToCode(block, 'run', generator.ORDER_ATOMIC);
+                if (codes[0] == '(') codes = codes.slice(1, -1);   // 去掉括号
+                return codes;
             }
         },
         {
@@ -362,7 +381,7 @@
                     "check": "String"
                 }
             ],
-            "output": null,
+            "output": "Procedure",
             "style": "procedure_blocks",
             "tooltip": "按名字获取函数",
             "inputsInline": true,
@@ -371,13 +390,45 @@
                 const funcName = generator.nameDB_.getName(NAME.slice(1, -1), Blockly.PROCEDURE_CATEGORY_NAME);
                 return [funcName, generator.ORDER_NONE];
             }
-        }
+        },
+        {
+            "type": "procedure_call_by_name",
+            "message0": "%{BKY_PROCEDURE_CALL_BY_NAME}",
+            "args0": [
+                {
+                    "type": "input_value",
+                    "name": "NAME",
+                    "check": ["String", "Procedure"]
+                },
+                {
+                    "type": "input_value",
+                    "name": "PARAMS",
+                    "check": "Array"
+                }
+            ],
+            "output": null,
+            "style": "procedure_blocks",
+            "tooltip": "调用函数",
+            "inputsInline": false,
+            "JavaScript": function (block, generator) {
+                let NAME = generator.valueToCode(block, "NAME", generator.ORDER_ATOMIC);
+                if (block.inputList[0].connection.targetConnection.check[0] == 'String')
+                    NAME = generator.nameDB_.getName(NAME.slice(1, -1), Blockly.PROCEDURE_CATEGORY_NAME);
+                let PARAMS = generator.valueToCode(block, "PARAMS", generator.ORDER_ATOMIC);
+                if (PARAMS) {
+                    PARAMS = JSON.parse(PARAMS);
+                    return [`${NAME}(${PARAMS.join(",")});`, generator.ORDER_NONE];
+                } else {    // 如果没有输入
+                    return [`${NAME}();`, generator.ORDER_NONE];
+                }
+            }
+        },
     ]
     // 可以用json注册，也可以用js注册，用其一即可。
     Blockly.defineBlocksWithJsonArray(extraBlocks);
     // 代码生成器
     for (const block of extraBlocks) {
-        Blockly.JavaScript[block['type']] = block['JavaScript'];
+        Blockly.JavaScript.forBlock[block['type']] = block['JavaScript'];
     }
 })();
 
