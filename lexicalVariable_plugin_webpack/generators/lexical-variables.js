@@ -20,7 +20,7 @@ function getVariableName(name) {
 
 ;(function(){
   const javascriptGenerator = Blockly.JavaScript;
-  javascriptGenerator['lexical_variable_get'] = function (block) {
+  javascriptGenerator.forBlock['lexical_variable_get'] = function (block) {
     const code = getVariableName(block.getFieldValue('VAR'));
     return [code, javascriptGenerator.ORDER_ATOMIC];
   };
@@ -38,12 +38,12 @@ function getVariableName(name) {
     return varName + ' = ' + argument0 + ';\n';
   }
 
-  javascriptGenerator['lexical_variable_set'] = function (block) {
+  javascriptGenerator.forBlock['lexical_variable_set'] = function (block) {
     // Variable setter.
     return genBasicSetterCode(block, 'VAR');
   };
 
-  javascriptGenerator['global_declaration'] = function (block) {
+  javascriptGenerator.forBlock['global_declaration'] = function (block) {
     // Global variable declaration
     return 'var ' + genBasicSetterCode(block, 'NAME');
   };
@@ -63,7 +63,7 @@ function getVariableName(name) {
     return code;
   }
 
-  javascriptGenerator['local_declaration_statement'] = function () {
+  javascriptGenerator.forBlock['local_declaration_statement'] = function () {
     let code = generateDeclarations(this);
     code += javascriptGenerator.statementToCode(this, 'STACK',
         javascriptGenerator.ORDER_NONE);
@@ -71,7 +71,7 @@ function getVariableName(name) {
     return code;
   };
 
-  javascriptGenerator['local_declaration_expression'] = function () {
+  javascriptGenerator.forBlock['local_declaration_expression'] = function () {
     // TODO: This can probably be redone to use the variables as parameters to the generated function
     // and then call the function with the generated variable values.
     let code = '(function() {\n'

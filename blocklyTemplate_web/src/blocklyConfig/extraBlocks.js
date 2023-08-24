@@ -287,7 +287,7 @@
             "JavaScript": function (block, generator) {
                 let codes = generator.valueToCode(block, 'run', generator.ORDER_ATOMIC);
                 if (codes[0] == '(') codes = codes.slice(1, -1);   // 去掉括号
-                return codes;
+                return codes + ';';
             }
         },
         {
@@ -428,10 +428,10 @@
                     NAME = generator.nameDB_.getName(NAME.slice(1, -1), Blockly.PROCEDURE_CATEGORY_NAME);
                 let PARAMS = generator.valueToCode(block, "PARAMS", generator.ORDER_ATOMIC);
                 if (PARAMS) {
-                    PARAMS = JSON.parse(PARAMS);
-                    return [`${NAME}(${PARAMS.join(",")});`, generator.ORDER_NONE];
+                    PARAMS = PARAMS.slice(1, -1).split(',').map(x => x.trim());
+                    return [`${NAME}(${PARAMS.join(",")})`, generator.ORDER_NONE];
                 } else {    // 如果没有输入
-                    return [`${NAME}();`, generator.ORDER_NONE];
+                    return [`${NAME}()`, generator.ORDER_NONE];
                 }
             }
         },

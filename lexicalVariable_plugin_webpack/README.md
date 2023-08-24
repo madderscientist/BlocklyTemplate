@@ -47,7 +47,8 @@ javascriptGenerator['controls_do_then_return'] = function(block) {
 
 4. 为procedure改bug
 块“procedures_callreturn”生成代码会报错，说没有toLowerCase这个属性。我猜是getName的时候返回了null，说明没有找到这个。全部注释了这个块的代码生成逻辑，但是依旧报错。于是我**把procedure中所有叫“PROCNAME”的全部换成了“NAME”**，问题解决。<br>
-这个procedure块问题很多，还有：定义必须在所有调用之后删除，不然报错。改成“NAME”后这个问题也被解决了。
+这个procedure块问题很多，还有：定义必须在所有调用之后删除，不然报错。改成“NAME”后这个问题也被解决了。<br>
+【后记】发现要覆盖原来的generator**必须用Blockly.JavaScript.forBlock['']**，所以插件中重新定义的generator全部没有生效。所以最正确的做法是加上forBlock，而不是改为“NAME”去迁就默认的generator。这样修改解决了另一个bug：无法传参。2023 8 24全面修改。
 
 5. 暴露更多属性
 在我添加的eval块中，我想使用FieldLexicalVariable的变量选择框，但是需要代码生成，所以在index.js中添加了：
@@ -55,6 +56,7 @@ javascriptGenerator['controls_do_then_return'] = function(block) {
 export {getVariableName} from './generators/lexical-variables.js';
 export * as WarningHandler from './warningHandler.js';
 ```
+在[extraBlocks.js](blocklyTemplate_web\src\blocklyConfig\extraBlocks.js)的RenameVar_mutator定义中使用了这两个属性，使用方法见注释。
 
 
 ### 2. webpack配置

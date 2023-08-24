@@ -7,7 +7,7 @@ import * as Blockly from 'blockly/core';
    * @param {Blockly.Block} block The block to generate code for.
    * @return {string} The generated code.
    */
-  javascriptGenerator['controls_for'] = function (block) {
+  javascriptGenerator.forBlock['controls_for'] = function (block) {
     // For loop.
     const variable0 = javascriptGenerator.nameDB_.getName(
         block.getFieldValue('VAR'), Blockly.VARIABLE_CATEGORY_NAME);
@@ -73,7 +73,7 @@ import * as Blockly from 'blockly/core';
   };
 // controls_forRange and controls_for are aliases.  This is to make the
 // controls_statement_flow block work correctly for controls_forRange.
-  javascriptGenerator['controls_forRange'] = javascriptGenerator['controls_for'];
+  javascriptGenerator.forBlock['controls_forRange'] = javascriptGenerator.forBlock['controls_for'];
 
   /**
    * This code is copied from Blockly but the 'var' keyword is replaced by 'let'
@@ -81,7 +81,7 @@ import * as Blockly from 'blockly/core';
    * @param {Blockly.Block} block The block to generate code for.
    * @return {string} The generated code.
    */
-  javascriptGenerator['controls_forEach'] = function (block) {
+  javascriptGenerator.forBlock['controls_forEach'] = function (block) {
     // For each loop.
     const variable0 = javascriptGenerator.nameDB_.getName(
         block.getFieldValue('VAR'), Blockly.VARIABLE_CATEGORY_NAME);
@@ -105,7 +105,7 @@ import * as Blockly from 'blockly/core';
     return code;
   };
 
-  javascriptGenerator['controls_do_then_return'] = function(block) {
+  javascriptGenerator.forBlock['controls_do_then_return'] = function(block) {
     const doWhat = javascriptGenerator.statementToCode(block, 'STM') || '';
     const returnWhat = javascriptGenerator.valueToCode(block, 'VALUE',
         javascriptGenerator.ORDER_NONE) || '';

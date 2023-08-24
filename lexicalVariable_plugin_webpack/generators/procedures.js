@@ -5,7 +5,7 @@ import * as Blockly from 'blockly/core';
    * @param {Blockly.Block} block The block to generate code for.
    * @return {string} The generated code.
    */
-  javascriptGenerator['procedures_callreturn'] = function (block) {
+  javascriptGenerator.forBlock['procedures_callreturn'] = function (block) {
     // Call a procedure with a return value.
     const funcName = javascriptGenerator.nameDB_.getName(
         block.getFieldValue('NAME'), Blockly.PROCEDURE_CATEGORY_NAME);
