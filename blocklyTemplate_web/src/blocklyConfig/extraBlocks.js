@@ -139,6 +139,11 @@
             if (this.lexicalVariableDefined_ == undefined) {      // 是否启用lexicalVariable变量系统
                 this.lexicalVariableDefined_ = !Blockly.getMainWorkspace().getToolbox().toolboxDef_.contents.find((x) => x.custom == "VARIABLE") // 无"custom": "VARIABLE"
                     && Boolean(window.LexicalVariables);
+                if (this.lexicalVariableDefined_) {             // 在只执行一次的地方定义onchange事件
+                    this.setOnChange(function (changeEvent) {   // 从lexicaVariable插件的lexical-variables.js中学的，setOnChange在原型链中
+                        window.LexicalVariables.WarningHandler.checkErrors(this);
+                    });
+                }
             }
             this.updateShape_();
         },
@@ -168,6 +173,12 @@
                             .appendField("为");
                         this.moveInputBefore('ADD' + i, "js");
                     }
+                }
+                if (this.itemCount_) {      // 仿lexicaVariable插件的lexical-variables.js写法。checkErrors会遍历error属性存的错误
+                    this.errors = [{
+                        func: window.LexicalVariables.WarningHandler.checkDropDownContainsValidValue,
+                        dropDowns: Array.from({ length: this.itemCount_ }, (_, i) => `VAR${i}`),
+                    }];
                 }
             } else {    // 无LexicalVariables插件的创建
                 if (!Blockly.getMainWorkspace().getAllVariables().length) this.setWarningText("no available variables");
@@ -412,7 +423,8 @@
             "inputsInline": false,
             "JavaScript": function (block, generator) {
                 let NAME = generator.valueToCode(block, "NAME", generator.ORDER_ATOMIC);
-                if (block.inputList[0].connection.targetConnection.check[0] == 'String')
+                let check = block.inputList[0].connection.targetConnection.check;
+                if (check && check[0] == 'String')
                     NAME = generator.nameDB_.getName(NAME.slice(1, -1), Blockly.PROCEDURE_CATEGORY_NAME);
                 let PARAMS = generator.valueToCode(block, "PARAMS", generator.ORDER_ATOMIC);
                 if (PARAMS) {
