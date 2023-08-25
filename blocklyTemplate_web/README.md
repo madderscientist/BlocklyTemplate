@@ -20,6 +20,20 @@ blockly项目模板，使用unpkg。本项目有如下特点：
 - **storage.js**: 保存代码
 - **toolbox.js**: 工具箱JSON配置
 - **zh-hans-extraMsg.js**: 新增块的中文翻译
+- **loadProject.js**: 指到下拉菜单的动作，和Blockly无关
 
 ## 设计时的权衡
 匿名函数：用定义函数+取函数代替<br>
+异步操作：在不修改源码的条件下，用正则表达式将所有函数声明全部变为async。而await由块的genetator提供。详见main.js的asyncSuppport变量。
+
+## 如何继续拓展功能
+- 拓展基本库：extraBlocks.js中的extraBlocks添加块的json定义，在定义的“JavaScript”字段添加生成方法
+- 自定义功能：理解注释，搭配官方文档，修改对应js文件相关内容
+- 添加新的类别：在moreAPI文件夹下，模仿serialBlocks.js编写新的文件，包括如下部分：
+    1. 检查环境(如serialBlocks中对LexicalVariables的检测)
+    2. 用json定义块
+    3. 用js定义块(不能用json定义的块，比如用到了lexicalVariable变量系统，需要仿照"lexicalVariable_plugin_webpack\blocks"编写。需要考虑修改插件源码。)
+    4. 新类别加入toolbox
+    5. 为新类别配置颜色
+    
+    最后，在html中引入新的js文件。应该在toolbox和theme定义后、main.js之前引入。

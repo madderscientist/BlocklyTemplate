@@ -1,4 +1,4 @@
-// {    // 带变量的写法 会自动创建变量，因此不用
+// {    // 带变量的写法 会自动创建变量，因此不用。改用LexicalVariable插件的变量系统
 //     "kind": "block",
 //     "type": "lists_indexOf",
 //     "inputs": {

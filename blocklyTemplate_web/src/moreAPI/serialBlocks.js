@@ -1,6 +1,7 @@
-// Web Serial API 前提是有LexicalVariable插件
-(function () {
-    if(window.LexicalVariables == undefined) return;
+// Web Serial API 相关
+; (function () {
+    if (window.LexicalVariables == undefined) return;    // Web Serial API 前提是有LexicalVariable插件
+    // 用json定义块
     const serialBlocks = [
         {
             "type": "serial_get",
@@ -212,7 +213,7 @@
     }
 
     // 插入toolbox
-    if (toolbox.contents.length == 9) {
+    if (toolbox.contents.length == 9) {     // 加一条分界线，以区分基本库和扩展库
         toolbox.contents.push({
             "kind": "sep"
         });
