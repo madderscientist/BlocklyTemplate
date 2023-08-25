@@ -298,7 +298,7 @@ FieldFlydown.prototype.dispose = function() {
  * @nocollapse
  */
 FieldFlydown.fromJson = function(options) {
-  const name = Blockly.utils.replaceMessageReferences(options['name']);
+  const name = Blockly.utils.parsing.replaceMessageReferences(options['name']);
   return new FieldFlydown(name, options['is_editable']);
 };
 

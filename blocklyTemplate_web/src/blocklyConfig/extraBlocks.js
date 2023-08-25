@@ -287,10 +287,32 @@
             "JavaScript": function (block, generator) {
                 let codes = generator.valueToCode(block, 'run', generator.ORDER_ATOMIC);
                 if (codes[0] == '(') codes = codes.slice(1, -1);   // 去掉括号
-                return codes + ';';
+                return codes + ';\n';
             }
-        },
-        {
+        }, {
+            "type": "controls_delay",
+            "message0": "%{BKY_CONTROLS_DELAY}",
+            "args0": [
+                {
+                    "type": "input_value",
+                    "name": "time",
+                    "check": "Number"
+                }
+            ],
+            "previousStatement": null,
+            "nextStatement": null,
+            "style": "control_blocks",
+            "tooltip": "延时",
+            "JavaScript": function (block, generator) {
+                let delayFunction = generator.provideFunction_(
+                    'delay',
+                    [ 'const ' + generator.FUNCTION_NAME_PLACEHOLDER_ + ' = (delay) => ',
+                      '  new Promise((resolve) => setTimeout(resolve, delay));'
+                    ]);
+                let time = generator.valueToCode(block, 'time', generator.ORDER_ATOMIC);
+                return `await ${delayFunction}(${time});\n`;
+            }
+        }, {
             "type": "lists_isArray",
             "message0": "%{BKY_LISTS_ISARRAY}%1",
             "args0": [
@@ -306,8 +328,7 @@
                 let obj = generator.valueToCode(block, 'obj', generator.ORDER_ATOMIC);
                 return [`Array.isArray(${obj})`, generator.ORDER_NONE];
             }
-        },
-        {
+        }, {
             "type": "lists_push",
             "message0": "%{BKY_LISTS_PUSH}",
             "args0": [
@@ -329,8 +350,7 @@
                 // 说是push，但要返回Array，就用这个方法代替吧
                 return [`[...${l},${pushes.join(',')}]`, generator.ORDER_NONE];
             }
-        },
-        {
+        }, {
             "type": "lists_splice",
             "message0": "%{BKY_LISTS_SPLICE}",
             "args0": [
@@ -365,8 +385,7 @@
                 )
                 return `${l}.splice(${at},${deleteNum}+1,${adds.join(',')});\n`;  // blockly的逻辑是从1开始
             }
-        },
-        {
+        }, {
             "type": "lists_concat",
             "message0": "%{BKY_LISTS_CONCAT}",
             'mutator': 'Arrayitems_mutator',
@@ -381,8 +400,7 @@
                 // 说是push，但要返回Array，就用这个方法代替吧
                 return [`[...${lists.join(', ...')}]`, generator.ORDER_NONE];
             }
-        },
-        {
+        }, {
             "type": "procedure_get",
             "message0": "%{BKY_PROCEDURE_GET}",
             "args0": [
@@ -401,8 +419,7 @@
                 const funcName = generator.nameDB_.getName(NAME.slice(1, -1), Blockly.PROCEDURE_CATEGORY_NAME);
                 return [funcName, generator.ORDER_NONE];
             }
-        },
-        {
+        }, {
             "type": "procedure_call_by_name",
             "message0": "%{BKY_PROCEDURE_CALL_BY_NAME}",
             "args0": [

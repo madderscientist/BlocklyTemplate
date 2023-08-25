@@ -166,7 +166,7 @@ FieldParameterFlydown.addHorizontalVerticalOption = function(
  * @nocollapse
  */
 FieldParameterFlydown.fromJson = function(options) {
-  const name = Blockly.utils.replaceMessageReferences(options['name']);
+  const name = Blockly.utils.parsing.replaceMessageReferences(options['text']);
   return new FieldParameterFlydown(name, options['is_editable']);
 };
 

@@ -56,7 +56,24 @@ javascriptGenerator['controls_do_then_return'] = function(block) {
 export {getVariableName} from './generators/lexical-variables.js';
 export * as WarningHandler from './warningHandler.js';
 ```
-在[extraBlocks.js](blocklyTemplate_web\src\blocklyConfig\extraBlocks.js)的RenameVar_mutator定义中使用了这两个属性，使用方法见注释。
+在[extraBlocks.js](blocklyTemplate_web\src\blocklyConfig\extraBlocks.js)的RenameVar_mutator定义中使用了这两个属性，使用方法见注释。<br>
+在Serial块中，想使用局部变量，所以导出了：
+```js
+export * as Shared from './shared.js';
+export {Substitution} from './substitution.js'
+```
+
+6. 修改filed的fromJson属性
+将Blockly.utils.replaceMessageReferences改为Blockly.utils.parsing.replaceMessageReferences
+同时，源码设计有问题，用JSON创建时，显示的文本和块共用了"name"字段（导致显示的值就是VAR）。所以我把field_parameter_flydown.js的fromJson所用的字段“name”改为了“text”，然后json中这样写：
+```js
+{
+  "type": "field_parameter_flydown",  // 查lexicalVariable插件的filed定义的fromJson函数可知传参
+  "name": "VAR",
+  "text": "data",
+  "is_editable": true
+}
+```
 
 
 ### 2. webpack配置

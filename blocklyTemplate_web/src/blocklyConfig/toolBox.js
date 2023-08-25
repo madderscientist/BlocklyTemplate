@@ -110,11 +110,35 @@ const toolbox = {
                 },
                 {
                     "kind": "block",
+                    "type": "controls_delay",
+                    "inputs": {
+                        "time": {
+                            "shadow": {
+                                "type": "math_number",
+                                "fields": {
+                                    "NUM": "1000"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "kind": "block",
                     "type": "controls_typeof"
                 },
                 {
                     "kind": "block",
-                    "type": "controls_print"
+                    "type": "controls_print",
+                    "inputs": {
+                        "msg": {
+                            "shadow": {
+                                "type": "text",
+                                "fields": {
+                                    "TEXT": "!"
+                                }
+                            }
+                        }
+                    }
                 },
                 {
                     "kind": "block",

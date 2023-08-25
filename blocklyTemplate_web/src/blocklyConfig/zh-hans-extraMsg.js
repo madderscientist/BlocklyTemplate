@@ -16,6 +16,7 @@ Blockly.Msg["CONTROLS_ALERT"] = "弹窗消息";
 Blockly.Msg["CONTROLS_RUNJS"] = "运行JavaScript";
 Blockly.Msg["CONTROLS_TYPEOF"] = "%1的类型";
 Blockly.Msg["CONTROLS_IGNORE_RETURN"] = "忽略返回值%1";
+Blockly.Msg["CONTROLS_DELAY"] = "延时%1毫秒";
 Blockly.Msg["LISTS_ISARRAY"] = "是否为列表";
 Blockly.Msg["LISTS_PUSH"] = "在列表%1尾部插入";
 Blockly.Msg["LISTS_CONCAT"] = "连接列表";

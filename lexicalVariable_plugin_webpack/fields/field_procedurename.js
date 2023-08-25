@@ -72,7 +72,7 @@ FieldProcedureName.prototype.onHtmlInputChange_ = function(e) {
  * @nocollapse
  */
 FieldProcedureName.fromJson = function(options) {
-  const name = Blockly.utils.replaceMessageReferences(options['name']);
+  const name = Blockly.utils.parsing.replaceMessageReferences(options['name']);
   return new FieldProcedureName(name);
 };
 

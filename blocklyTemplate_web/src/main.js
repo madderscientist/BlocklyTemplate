@@ -34,28 +34,28 @@ function setCodeTitle(newTitle) {
         function (workspace) {
             var c = defaultProcedureBlocks(workspace);
             c.length && c[c.length - 1].setAttribute("gap", "16");  // defaultProcedureBlocks最后设置了距离，所以还原
-            if(Blockly.Blocks.procedure_get) {
+            if (Blockly.Blocks.procedure_get) {
                 let d = document.createElement("block");
                 d.setAttribute("type", "procedure_get");
                 d.setAttribute("gap", "16");
                 c.push(d);
             }
-            if(Blockly.Blocks.procedure_call_by_name){
+            if (Blockly.Blocks.procedure_call_by_name) {
                 let d = document.createElement("block");
                 d.setAttribute("type", "procedure_call_by_name");
                 d.setAttribute("gap", "16");
 
                 // 添加默认连接块 仿照xml定义toolbox设置dom
                 let value = document.createElement('value');
-                value.setAttribute("name","PARAMS");
+                value.setAttribute("name", "PARAMS");
                 d.appendChild(value);
 
                 let listBlock = document.createElement('block');
-                listBlock.setAttribute("type","lists_create_with");
+                listBlock.setAttribute("type", "lists_create_with");
                 value.appendChild(listBlock);
 
                 let mutation = document.createElement('mutation');
-                mutation.setAttribute("items","0");
+                mutation.setAttribute("items", "0");
                 listBlock.appendChild(mutation);
 
                 c.push(d);
@@ -150,6 +150,31 @@ function bindClick(el, func) {  // 意义在于处理按钮的touch和click事�
     el.addEventListener('touchend', touchFunc, true);
 };
 
+var asyncSuppport = {       // 支持async/await 实现比较粗暴，如果有await则所有函数都用async，所有调用都用await
+    awaitGenerator: function (block, generator) {
+        const funcName = generator.nameDB_.getName(
+            block.getFieldValue('NAME'), Blockly.PROCEDURE_CATEGORY_NAME);
+        const args = [];
+        const variables = block.arguments_;
+        for (let i = 0; i < variables.length; i++) {
+            args[i] = generator.valueToCode(block, 'ARG' + i,
+                generator.ORDER_NONE) || 'null';
+        }
+        const code = "await" + funcName + '(' + args.join(', ') + ')';
+        return [code, generator.ORDER_FUNCTION_CALL];
+    },
+    defaultGenerator: Blockly.JavaScript.forBlock['procedures_callreturn'],
+    asyncCheck: function (code) {
+        if(code.search('await') != -1){
+            Blockly.JavaScript.forBlock['procedures_callreturn'] = asyncSuppport.awaitGenerator;
+            return `(async function(){\n${code.replace(/(?<=^|\n)function \w+\(.*\)/g, 'async $&')}\n})();`
+        }else{
+            Blockly.JavaScript.forBlock['procedures_callreturn'] = asyncSuppport.defaultGenerator;
+            return code;
+        }
+    }
+}
+
 function run(event) {
     // Prevent code from being executed twice on touchscreens.
     if (event.type === 'touchend') {
@@ -164,6 +189,7 @@ function run(event) {
     };
     var code = Blockly.JavaScript.workspaceToCode(workspace);
     Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
+    code = asyncSuppport.asyncCheck(code);
     try {
         console.log(code)
         eval(code);

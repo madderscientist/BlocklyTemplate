@@ -71,7 +71,7 @@ FieldGlobalFlydown.prototype.flydownBlocksXML_ = function() {
  * @nocollapse
  */
 FieldGlobalFlydown.fromJson = function(options) {
-  const name = Blockly.utils.replaceMessageReferences(options['name']);
+  const name = Blockly.utils.parsing.replaceMessageReferences(options['name']);
   return new FieldGlobalFlydown(name);
 };
 
