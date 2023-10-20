@@ -37,3 +37,6 @@ blockly项目模板，使用unpkg。本项目有如下特点：
     5. 为新类别配置颜色
     
     最后，在html中引入新的js文件。应该在toolbox和theme定义后、main.js之前引入。
+
+## 使用
+example文件夹下的json提供了使用案例，可以直接导入应用查看（左上角-从文件导入-选择example文件夹下的json文件）。
