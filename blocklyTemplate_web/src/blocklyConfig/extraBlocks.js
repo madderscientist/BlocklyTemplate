@@ -132,6 +132,30 @@
     );
 
     Blockly.Extensions.registerMutator(
+        'DictItems_mutator', {
+        saveExtraState: MutatorTemplate.saveExtraState,
+        loadExtraState: MutatorTemplate.loadExtraState,
+        decompose: function (workspace) {
+            const topBlock = workspace.newBlock('dictionarise_create_with_container');
+            topBlock.initSvg();
+            var connection = topBlock.getInput('STACK').connection;
+            for (var i = 0; i < this.itemCount_; i++) {
+                const itemBlock = workspace.newBlock('dictionaries_mutator_pair');
+                itemBlock.initSvg();
+                connection.connect(itemBlock.previousConnection);
+                connection = itemBlock.nextConnection;
+            }
+            return topBlock;
+        },
+        compose: MutatorTemplate.compose,
+        saveConnections: MutatorTemplate.saveConnections,
+        updateShape_: MutatorTemplate.updateShape_
+    }, undefined, ['dictionaries_mutator_pair']
+    );
+
+
+
+    Blockly.Extensions.registerMutator(
         'RenameVar_mutator', {
         saveExtraState: MutatorTemplate.saveExtraState,
         loadExtraState: function (state) {
@@ -399,6 +423,20 @@
                 )
                 // 说是push，但要返回Array，就用这个方法代替吧
                 return [`[...${lists.join(', ...')}]`, generator.ORDER_NONE];
+            }
+        }, {
+            "type": "dictionaries_concat",
+            "message0": "%{BKY_DICTIONARIES_CONCAT}",
+            'mutator': 'DictItems_mutator',
+            "output": "Dictionary",
+            "style": "dictionary_blocks",
+            "tooltip": "返回合并后的字典，不改变输入",
+            "inputsInline": false,
+            "JavaScript": function (block, generator) {
+                let dicts = Array.from({ length: block.inputList.length - 1 }, (_, i) =>
+                    generator.valueToCode(block, `ADD${i}`, generator.ORDER_ATOMIC)
+                )
+                return [`{...${dicts.join(', ...')}}`, generator.ORDER_NONE];
             }
         }, {
             "type": "procedure_get",

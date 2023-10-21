@@ -165,10 +165,10 @@ var asyncSuppport = {       // 支持async/await 实现比较粗暴，如果有a
     },
     defaultGenerator: Blockly.JavaScript.forBlock['procedures_callreturn'],
     asyncCheck: function (code) {
-        if(code.search('await') != -1){
+        if (code.search('await') != -1) {
             Blockly.JavaScript.forBlock['procedures_callreturn'] = asyncSuppport.awaitGenerator;
             return `(async function(){\n${code.replace(/(?<=^|\n)function \w+\(.*\)/g, 'async $&')}\n})();`
-        }else{
+        } else {
             Blockly.JavaScript.forBlock['procedures_callreturn'] = asyncSuppport.defaultGenerator;
             return code;
         }
@@ -256,4 +256,28 @@ function uploaded(files) {
             }
         }
     }
+}
+
+// 调试使用，查找Blockly的属性
+function hasKey(obj, key, path = '') {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        console.log(path); // 输出路径
+        return true;
+    }
+
+    for (var prop in obj) {
+        if (typeof obj[prop] === 'object' && obj[prop] !== null) {
+            if (path === '') {
+                if (hasKey(obj[prop], key, prop)) {
+                    return true;
+                }
+            } else {
+                if (hasKey(obj[prop], key, path + '.' + prop)) {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
 }

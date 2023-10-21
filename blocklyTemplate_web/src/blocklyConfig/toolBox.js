@@ -102,6 +102,10 @@ const toolbox = {
                 },
                 {
                     "kind": "block",
+                    "type": "controls_for_each_dict"
+                },
+                {
+                    "kind": "block",
                     "type": "controls_do_then_return"
                 },
                 {
@@ -658,6 +662,171 @@ const toolbox = {
                 {
                     "kind": "block",
                     "type": "lists_reverse"
+                }
+            ]
+        },
+        {
+            "kind": "category",
+            "name": "%{BKY_CATDICTIONARIES}",
+            "categorystyle": "dictionary_category",
+            "contents": [
+                {
+                    "kind": "block",
+                    "type": "dictionaries_create_with",
+                    "extraState": {
+                        "itemCount": 0
+                    }
+                },
+                {
+                    "kind": "block",
+                    "type": "dictionaries_create_with",
+                    "extraState": {
+                        "itemCount": 2
+                    },
+                    "inputs": {
+                        "ADD0": {
+                            "block": {
+                                "type": "dictionaries_pair",
+                                "inputs": {
+                                    "KEY": {
+                                        "shadow": {
+                                            "type": "text",
+                                            "fields": {
+                                                "TEXT": "key1"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "ADD1": {
+                            "block": {
+                                "type": "dictionaries_pair",
+                                "inputs": {
+                                    "KEY": {
+                                        "shadow": {
+                                            "type": "text",
+                                            "fields": {
+                                                "TEXT": "key2"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "kind": "block",
+                    "type": "dictionaries_pair",
+                    "inputs": {
+                        "KEY": {
+                            "shadow": {
+                                "type": "text",
+                                "fields": {
+                                    "TEXT": "key"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "kind": "block",
+                    "type": "dictionaries_lookup"
+                },
+                {
+                    "kind": "block",
+                    "type": "dictionaries_set_pair",
+                    "inputs": {
+                        "KEY": {
+                            "shadow": {
+                                "type": "text",
+                                "fields": {
+                                    "TEXT": "key"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "kind": "block",
+                    "type": "dictionaries_delete_pair",
+                    "inputs": {
+                        "KEY": {
+                            "shadow": {
+                                "type": "text",
+                                "fields": {
+                                    "TEXT": "key"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "kind": "block",
+                    "type": "dictionaries_recursive_lookup"
+                },
+                {
+                    "kind": "block",
+                    "type": "dictionaries_recursive_set"
+                },
+                {
+                    "kind": "block",
+                    "type": "dictionaries_getters"
+                },
+                {
+                    "kind": "block",
+                    "type": "dictionaries_getters",
+                    "fields": {
+                        "OP": "values"
+                    }
+                },
+                {
+                    "kind": "block",
+                    "type": "dictionaries_is_key_in"
+                },
+                {
+                    "kind": "block",
+                    "type": "dictionaries_alist_to_dict"
+                },
+                {
+                    "kind": "block",
+                    "type": "dictionaries_dict_to_alist"
+                },
+                {
+                    "kind": "block",
+                    "type": "dictionaries_copy"
+                },
+                {
+                    "kind": "block",
+                    "type": "dictionaries_combine_dicts"
+                },
+                {
+                    "kind": "block",
+                    "type": "dictionaries_concat",
+                    "extraState": {
+                        "itemCount": 2
+                    }
+                },
+                // {
+                //     "kind": "block",
+                //     "type": "dictionaries_walk_tree"
+                // },
+                // {
+                //     "kind": "block",
+                //     "type": "dictionaries_walk_all"
+                // },
+                {
+                    "kind": "block",
+                    "type": "dictionaries_is_dict"
+                },
+                {
+                    "kind": "block",
+                    "type": "dictionaries_toJSON"
+                },
+                {
+                    "kind": "block",
+                    "type": "dictionaries_fromJSON"
                 }
             ]
         },

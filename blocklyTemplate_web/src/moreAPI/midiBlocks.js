@@ -415,7 +415,7 @@
     }
 
     // 插入toolbox
-    if (toolbox.contents.length == 9) {     // 加一条分界线，以区分基本库和扩展库
+    if (toolbox.contents.length == 10) {     // 加一条分界线，以区分基本库和扩展库
         toolbox.contents.push({
             "kind": "sep"
         });

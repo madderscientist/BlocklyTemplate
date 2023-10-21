@@ -17,6 +17,9 @@ Blockly.Themes.Custom = Blockly.Theme.defineTheme('custom', {
         'list_category': {
             'colour': "#58b5dc"
         },
+        'dictionary_category': {
+            'colour': "#2d1799"
+        },
         'colour_category': {
             'colour': "#909090"
         },
@@ -56,6 +59,11 @@ Blockly.Themes.Custom = Blockly.Theme.defineTheme('custom', {
             'colourPrimary': "#49a6d4",
             'colourSecondary': "#b6dbee",
             'colourTertiary': "#80c1e1"
+        },
+        'dictionary_blocks': {
+            'colourPrimary': "#2d1799",
+            'colourSecondary': "#a0a0a0",
+            'colourTertiary': "#5c4cb0"
         },
         'colour_blocks': {
             'colourPrimary': "#646464",

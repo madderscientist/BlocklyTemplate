@@ -122,3 +122,7 @@ export {Substitution} from './substitution.js'
 }
 ```
 相关的使用在[serialBlocks.js](blocklyTemplate_web\src\moreAPI\serialBlocks.js)的serial_connect块定义中。
+
+7. 修改controls_forEach的代码生成
+应为2023/10/22加入了字典，数组也可以设置属性了。
+源码用了 for in 遍历列表，但是这样可能会导致遍历了属性。用 for of 可以避免。

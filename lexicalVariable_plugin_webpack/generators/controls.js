@@ -97,11 +97,12 @@ import * as Blockly from 'blockly/core';
           variable0 + '_list', Blockly.VARIABLE_CATEGORY_NAME);
       code += 'const ' + listVar + ' = ' + argument0 + ';\n';
     }
-    const indexVar = javascriptGenerator.nameDB_.getDistinctName(
-        variable0 + '_index', Blockly.VARIABLE_CATEGORY_NAME);
-    branch = javascriptGenerator.INDENT + 'const ' + variable0 + ' = ' +
-        listVar + '[' + indexVar + '];\n' + branch;
-    code += 'for (let ' + indexVar + ' in ' + listVar + ') {\n' + branch + '}\n';
+    // const indexVar = javascriptGenerator.nameDB_.getDistinctName(
+    //     variable0 + '_index', Blockly.VARIABLE_CATEGORY_NAME);
+    // branch = javascriptGenerator.INDENT + 'const ' + variable0 + ' = ' +
+    //     listVar + '[' + indexVar + '];\n' + branch;
+    // code += 'for (let ' + indexVar + ' in ' + listVar + ') {\n' + branch + '}\n';
+    code += `for (let ${variable0} of ${listVar}) {\n${branch}}\n`;
     return code;
   };
 
@@ -111,5 +112,26 @@ import * as Blockly from 'blockly/core';
         javascriptGenerator.ORDER_NONE) || '';
     const code = `(()=>{\n${doWhat}\treturn ${returnWhat};\n})()`
     return [code, javascriptGenerator.ORDER_ATOMIC];
+  };
+
+  javascriptGenerator.forBlock['controls_for_each_dict'] = function (block) {
+    const variable0 = javascriptGenerator.nameDB_.getName(
+        block.getFieldValue('KEY'), Blockly.VARIABLE_CATEGORY_NAME);
+    const variable1 = javascriptGenerator.nameDB_.getName(
+        block.getFieldValue('VALUE'), Blockly.VARIABLE_CATEGORY_NAME);
+    const argument0 = javascriptGenerator.valueToCode(block, 'DICT',
+        javascriptGenerator.ORDER_ASSIGNMENT) || '{}';
+    let branch = javascriptGenerator.statementToCode(block, 'DO');
+    branch = javascriptGenerator.addLoopTrap(branch, block);
+    let code = '';
+    // Cache non-trivial values to variables to prevent repeated look-ups.
+    let listVar = argument0;
+    if (!argument0.match(/^\w+$/)) {
+      listVar = javascriptGenerator.nameDB_.getDistinctName(
+          variable0 + '_' + variable1 + '_dict', Blockly.VARIABLE_CATEGORY_NAME);
+      code += 'const ' + listVar + ' = ' + argument0 + ';\n';
+    }
+    code += `for (let [${variable0}, ${variable1}] of Object.entries(${listVar})) {\n${branch}}\n`;
+    return code;
   };
 })();

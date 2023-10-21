@@ -233,8 +233,7 @@ Blockly.Blocks['controls_forEach'] = {
     let loopVar = this.getFieldValue('VAR');
     // Invariant: Shared.showPrefixToUser must also be true!
     if (Shared.usePrefixInCode) {
-      loopVar = (Shared.possiblyPrefixMenuNameWith(Shared.loopParameterPrefix))(
-          loopVar);
+      loopVar = (Shared.possiblyPrefixMenuNameWith(Shared.loopParameterPrefix))(loopVar);
     }
     const newEnv = env.concat([loopVar]);
     const listResults = LexicalVariable.referenceResult(
@@ -267,8 +266,7 @@ Blockly.Blocks['controls_forEach'] = {
     }
   },
   renameBound: function(boundSubstitution, freeSubstitution) {
-    LexicalVariable.renameFree(this.getInputTargetBlock('LIST'),
-        freeSubstitution);
+    LexicalVariable.renameFree(this.getInputTargetBlock('LIST'), freeSubstitution);
     const oldIndexVar = this.getFieldValue('VAR');
     const newIndexVar = boundSubstitution.apply(oldIndexVar);
     if (newIndexVar !== oldIndexVar) {
@@ -317,7 +315,7 @@ Blockly.Blocks['controls_forEach'] = {
       result.unite(LexicalVariable.freeVariables(nextBlock));
     }
     return result;
-  },
+  }
 };
 
 Blockly.Blocks['controls_do_then_return'] = {
@@ -337,3 +335,126 @@ Blockly.Blocks['controls_do_then_return'] = {
   },
 };
 
+Blockly.Blocks['controls_for_each_dict'] = {
+  category: 'Control',
+  helpUrl: Blockly.Msg.LANG_CONTROLS_FOREACH_DICT_HELPURL,
+  init: function() {
+    this.setStyle('loop_blocks');
+    // this.setColour(Blockly.CONTROL_CATEGORY_HUE);
+    this.appendValueInput('DICT')
+        .setCheck(Utilities.yailTypeToBlocklyType('dictionary',
+            Utilities.INPUT))
+        .appendField(Blockly.Msg.LANG_CONTROLS_FOREACH_DICT_INPUT_ITEM)
+        .appendField(new FieldParameterFlydown(
+          Blockly.Msg.LANG_CONTROLS_FOREACH_DICT_INPUT_KEY,
+          true, FieldFlydown.DISPLAY_BELOW), 'KEY')
+        .appendField(new FieldParameterFlydown(
+          Blockly.Msg.LANG_CONTROLS_FOREACH_DICT_INPUT_VALUE,
+          true, FieldFlydown.DISPLAY_BELOW), 'VALUE')
+        .appendField(Blockly.Msg.LANG_CONTROLS_FOREACH_DICT_INPUT_INDICT)
+        .setAlign(Blockly.inputs.Align.RIGHT);
+    this.appendStatementInput('DO')
+        .appendField(Blockly.Msg.LANG_CONTROLS_FOREACH_DICT_INPUT_DO);
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.setTooltip(Blockly.Msg.LANG_CONTROLS_FOREACH_DICT_TOOLTIP);
+    this.lexicalVarPrefix = Shared.loopParameterPrefix;
+  },
+  referenceResults: function(name, prefix, env) {
+    let keyVAR = this.getFieldValue('KEY');
+    let valueVAR = this.getFieldValue('VALUE');
+    if (Shared.usePrefixInCode) {
+      keyVAR = (Shared.possiblyPrefixMenuNameWith(Shared.loopParameterPrefix))(keyVAR);
+      valueVAR = (Shared.possiblyPrefixMenuNameWith(Shared.loopParameterPrefix))(valueVAR);
+    }
+    const newEnv = env.concat([keyVAR, valueVAR]);
+    const listResults = LexicalVariable.referenceResult(
+        this.getInputTargetBlock('DICT'), name, prefix, env);
+    const doResults = LexicalVariable.referenceResult(
+        this.getInputTargetBlock('DO'), name, prefix, newEnv);
+    const nextResults = LexicalVariable.referenceResult(
+        LexicalVariable.getNextTargetBlock(this), name, prefix, env);
+  return [listResults, doResults, nextResults];
+  },
+  withLexicalVarsAndPrefix:
+    Blockly.Blocks.controls_forRange.withLexicalVarsAndPrefix,
+  getVars: function () {
+    return [this.getFieldValue('KEY'), this.getFieldValue('VALUE')];
+  },
+  blocksInScope: function () {
+    const doBlock = this.getInputTargetBlock('DO');
+    if (doBlock) {
+      return [doBlock];
+    } else {
+      return [];
+    }
+  },
+  declaredNames: function () {
+    return [this.getFieldValue('KEY'), this.getFieldValue('VALUE')];
+  },
+  renameVar: function (oldName, newName) {
+    if (Blockly.Names.equals(oldName, this.getFieldValue('KEY'))) {
+      this.setFieldValue(newName, 'KEY');
+    }
+    if (Blockly.Names.equals(oldName, this.getFieldValue('VALUE'))) {
+      this.setFieldValue(newName, 'VALUE');
+    }
+  },
+  renameBound: function (boundSubstitution, freeSubstitution) {
+    LexicalVariable.renameFree(this.getInputTargetBlock('DICT'), freeSubstitution);
+    var varFieldIds = ['KEY', 'VALUE'];
+    for (var i = 0, fieldId; (fieldId = varFieldIds[i]); i++) {
+      const oldVar = this.getFieldValue(fieldId);
+      const newVar = boundSubstitution.apply(oldVar);
+      if (newVar !== oldVar) {
+        this.renameVar(oldVar, newVar);
+        const indexSubstitution = Substitution.simpleSubstitution(
+            oldVar, newVar);
+        const extendedFreeSubstitution = freeSubstitution.extend(
+            indexSubstitution);
+        LexicalVariable.renameFree(this.getInputTargetBlock('DO'),
+            extendedFreeSubstitution);
+      } else {
+        const removedFreeSubstitution = freeSubstitution.remove([oldVar]);
+        LexicalVariable.renameFree(this.getInputTargetBlock('DO'),
+            removedFreeSubstitution);
+      }
+    }
+    if (this.nextConnection) {
+      const nextBlock = this.nextConnection.targetBlock();
+      LexicalVariable.renameFree(nextBlock, freeSubstitution);
+    }
+  },
+  renameFree: function (freeSubstitution) {
+    const bodyFreeVars = LexicalVariable.freeVariables(
+        this.getInputTargetBlock('DO'));
+    const varFieldIds = ['KEY', 'VALUE'];
+    const boundSubstitution = new Substitution();
+    for (let i = 0, fieldId; (fieldId = varFieldIds[i]); i++) {
+      const oldVar = this.getFieldValue(fieldId);
+      bodyFreeVars.deleteName(oldVar);
+      const renamedBodyFreeVars = bodyFreeVars.renamed(freeSubstitution);
+      if (renamedBodyFreeVars.isMember(oldVar)) {
+        const newVar = FieldLexicalVariable.nameNotIn(
+            oldVar, renamedBodyFreeVars.toList());
+        const substitution = Substitution.simpleSubstitution(
+            oldVar, newVar);
+        boundSubstitution.extend(substitution);
+      }
+    }
+  },
+  freeVariables: function () { // return the free variables of this block
+    var result = LexicalVariable.freeVariables(
+        this.getInputTargetBlock('DO'));
+    // Remove bound variables from body free vars.
+    result.deleteName(this.getFieldValue('KEY'));
+    result.deleteName(this.getFieldValue('VALUE'));
+    result.unite(LexicalVariable.freeVariables(
+        this.getInputTargetBlock('DICT')));
+    if (this.nextConnection) {
+      const nextBlock = this.nextConnection.targetBlock();
+      result.unite(LexicalVariable.freeVariables(nextBlock));
+    }
+    return result;
+  }
+};
