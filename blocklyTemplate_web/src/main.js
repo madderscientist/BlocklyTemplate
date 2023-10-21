@@ -1,3 +1,11 @@
+Object.prototype.toString = function () {
+    try {
+        return JSON.stringify(this);
+    } catch (e) {
+        return '[object Object]';
+    }
+}
+
 var workspace = null;
 // 默认打开的是untitled。保存则清空untitled的保存内容，更新codeTitle。新建则清空untitled。
 var codeTitle = '';
