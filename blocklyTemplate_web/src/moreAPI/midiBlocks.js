@@ -2,7 +2,44 @@
 ; (function () {
     if (typeof midi == undefined) return;    // 需要在html中引入了midi.js
     // 用json定义块
-    const serialBlocks = [
+    const midiBlocks = [
+        {
+            "type": "midi_note",
+            "message0": "%{BKY_MIDI_NOTE}",
+            "args0": [
+                {
+                    "type": "field_dropdown",
+                    "name": "Pitch",
+                    "options": [
+                        ["-1",  '0'], ["0",   '1'],
+                        ["1",   '2'], ["2",   '3'],
+                        ["3",   '4'], ["4",   '5'],
+                        ["5",   '6'], ["6",   '7'],
+                        ["7",   '8'], ["8",   '9'],
+                        ["9",  '10']
+                    ]
+                }, {
+                    "type": "field_dropdown",
+                    "name": "Note",
+                    "options": [
+                        ["C",  '0'],    ["C#", '1'],
+                        ["D",  '2'],    ["D#", '3'],
+                        ["E",  '4'],    ["F",  '5'],
+                        ["F#", '6'],    ["G",  '7'],
+                        ["G#", '8'],    ["A",  '9'],
+                        ["A#", '10'],   ["B",  '11']
+                    ]
+                }
+            ],
+            "output": "Number",
+            "style": "midi_blocks",
+            "tooltip": "音高从-1到9，每级音高有音符12个。所有音符编码从0到127，因此最高为9G",
+            "JavaScript": function (block, generator) {
+                let pitch = parseInt(block.getFieldValue('Pitch'));
+                let note = parseInt(block.getFieldValue('Note'));
+                return [pitch*12+note, generator.ORDER_NONE];
+            }
+        },
         {
             "type": "midi_file_open",
             "message0": "%{BKY_MIDI_FILE_OPEN}",
@@ -393,6 +430,7 @@
     ];
     // 消息定义
     Blockly.Msg["CATMIDI"] = "MIDI";
+    Blockly.Msg["MIDI_NOTE"] = "音高%1音符%2";
     Blockly.Msg["MIDI_FILE_OPEN"] = "读取midi文件数据";
     Blockly.Msg["MIDI_READ"] = "解析midi数据%1";
     Blockly.Msg["MIDI_NEW"] = "新建midi %1速度%2拍号%3四分音符tick数%4音轨列表%5";
@@ -408,9 +446,9 @@
     Blockly.Msg["MIDI_DOWNLOAD"] = "将midi数据%1下载为文件%2";
     Blockly.Msg["MIDI_TOJSON"] = "导出midi%1为JSON";
 
-    Blockly.defineBlocksWithJsonArray(serialBlocks);
+    Blockly.defineBlocksWithJsonArray(midiBlocks);
     // 代码生成器
-    for (const block of serialBlocks) {
+    for (const block of midiBlocks) {
         Blockly.JavaScript.forBlock[block['type']] = block['JavaScript'];
     }
 
@@ -425,6 +463,14 @@
         "name": "%{BKY_CATMIDI}",
         "categorystyle": "midi_category",
         "contents": [
+            {
+                "kind": "block",
+                "type": "midi_note",
+                "fields": {
+                    "Pitch": "4",
+                    "Note": "0"
+                }
+            },
             {
                 "kind": "block",
                 "type": "midi_file_open"
