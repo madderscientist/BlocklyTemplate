@@ -337,6 +337,74 @@
                 return `await ${delayFunction}(${time});\n`;
             }
         }, {
+            "type": "controls_timeout",
+            "message0": "%{BKY_CONTROLS_TIMEOUT}",
+            "args0": [
+                {
+                    "type": "input_value",
+                    "name": "time",
+                    "check": "Number"
+                }
+            ],
+            "message1": "%{BKY_CONTROLS_ASYNC_DO}",
+            "args1": [
+                {
+                    "type": "input_statement",
+                    "name": "DO"
+                }
+            ],
+            "output": "Number",
+            "style": "control_blocks",
+            "tooltip": "异步延迟,不阻塞\n返回时钟id,用于清除",
+            "JavaScript": function (block, generator) {
+                let time = generator.valueToCode(block, 'time', generator.ORDER_ATOMIC);
+                let DO = generator.statementToCode(block, 'DO');
+                return [`setTimeout(()=>{\n${DO}},${time})`, generator.ORDER_NONE];
+            }
+        }, {
+            "type": "controls_interval",
+            "message0": "%{BKY_CONTROLS_INTERVAL}",
+            "args0": [
+                {
+                    "type": "input_value",
+                    "name": "time",
+                    "check": "Number"
+                }
+            ],
+            "message1": "%{BKY_CONTROLS_ASYNC_DO}",
+            "args1": [
+                {
+                    "type": "input_statement",
+                    "name": "DO"
+                }
+            ],
+            "output": "Number",
+            "style": "control_blocks",
+            "tooltip": "异步延迟,不阻塞\n返回时钟ID,用于清除",
+            "JavaScript": function (block, generator) {
+                let time = generator.valueToCode(block, 'time', generator.ORDER_ATOMIC);
+                let DO = generator.statementToCode(block, 'DO');
+                return [`setInterval(()=>{\n${DO}},${time})`, generator.ORDER_NONE];
+            }
+        }, {
+            "type": "controls_clear_clock",
+            "message0": "%{BKY_CONTROLS_CLEAR_CLK}",
+            "args0": [
+                {
+                    "type": "input_value",
+                    "name": "CLK",
+                    "check": "Number"
+                }
+            ],
+            "previousStatement": null,
+            "nextStatement": null,
+            "style": "control_blocks",
+            "tooltip": "取消计时。传参为时钟ID",
+            "JavaScript": function (block, generator) {
+                let clk = generator.valueToCode(block, 'CLK', generator.ORDER_ATOMIC);
+                return `clearInterval(${clk});\n`;   // 由于clearTimeout和clearInterval共享ID池，所以可以混用
+            }
+        }, {
             "type": "lists_isArray",
             "message0": "%{BKY_LISTS_ISARRAY}%1",
             "args0": [
@@ -407,7 +475,7 @@
                 let adds = Array.from({ length: block.inputList.length - 4 }, (_, i) =>
                     generator.valueToCode(block, `ADD${i}`, generator.ORDER_ATOMIC)
                 )
-                return `${l}.splice(${at},${deleteNum}+1,${adds.join(',')});\n`;  // blockly的逻辑是从1开始
+                return `${l}.splice(${at}-1,${deleteNum},${adds.join(',')});\n`;  // blockly的逻辑是从1开始
             }
         }, {
             "type": "lists_concat",

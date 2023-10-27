@@ -164,6 +164,38 @@ const toolbox = {
                 },
                 {
                     "kind": "block",
+                    "type": "controls_timeout",
+                    "inputs": {
+                        "time": {
+                            "shadow": {
+                                "type": "math_number",
+                                "fields": {
+                                    "NUM": "1000"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "kind": "block",
+                    "type": "controls_interval",
+                    "inputs": {
+                        "time": {
+                            "shadow": {
+                                "type": "math_number",
+                                "fields": {
+                                    "NUM": "1000"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "kind": "block",
+                    "type": "controls_clear_clock"
+                },
+                {
+                    "kind": "block",
                     "type": "controls_eval",
                     "inputs": {
                         "js": {
