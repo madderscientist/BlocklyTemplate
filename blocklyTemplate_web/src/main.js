@@ -168,16 +168,22 @@ var asyncSuppport = {       // 支持async/await 实现比较粗暴，如果有a
             args[i] = generator.valueToCode(block, 'ARG' + i,
                 generator.ORDER_NONE) || 'null';
         }
-        const code = "await" + funcName + '(' + args.join(', ') + ')';
+        const code = "await " + funcName + '(' + args.join(', ') + ')';
         return [code, generator.ORDER_FUNCTION_CALL];
     },
     defaultGenerator: Blockly.JavaScript.forBlock['procedures_callreturn'],
     asyncCheck: function (code) {
         if (code.search('await') != -1) {
-            Blockly.JavaScript.forBlock['procedures_callreturn'] = asyncSuppport.awaitGenerator;
+            if (Blockly.JavaScript.forBlock['procedures_callreturn'] != asyncSuppport.awaitGenerator) {
+                Blockly.JavaScript.forBlock['procedures_callreturn'] = asyncSuppport.awaitGenerator;
+                code = Blockly.JavaScript.workspaceToCode(workspace);
+            }
             return `(async function(){\n${code.replace(/(?<=^|\n)function \w+\(.*\)/g, 'async $&')}\n})();`
         } else {
-            Blockly.JavaScript.forBlock['procedures_callreturn'] = asyncSuppport.defaultGenerator;
+            if (Blockly.JavaScript.forBlock['procedures_callreturn'] != asyncSuppport.defaultGenerator) {
+                Blockly.JavaScript.forBlock['procedures_callreturn'] = asyncSuppport.defaultGenerator;
+                code = Blockly.JavaScript.workspaceToCode(workspace);
+            }
             return code;
         }
     }
