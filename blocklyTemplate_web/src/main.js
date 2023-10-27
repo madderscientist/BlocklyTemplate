@@ -174,18 +174,11 @@ var asyncSuppport = {       // 支持async/await 实现比较粗暴，如果有a
     defaultGenerator: Blockly.JavaScript.forBlock['procedures_callreturn'],
     asyncCheck: function (code) {
         if (code.search('await') != -1) {
-            if (Blockly.JavaScript.forBlock['procedures_callreturn'] != asyncSuppport.awaitGenerator) {
-                Blockly.JavaScript.forBlock['procedures_callreturn'] = asyncSuppport.awaitGenerator;
-                code = Blockly.JavaScript.workspaceToCode(workspace);
-            }
+            Blockly.JavaScript.forBlock['procedures_callreturn'] = asyncSuppport.awaitGenerator;
+            code = Blockly.JavaScript.workspaceToCode(workspace);
+            Blockly.JavaScript.forBlock['procedures_callreturn'] = asyncSuppport.defaultGenerator;  // 恢复默认生成方式
             return `(async function(){\n${code.replace(/(?<=^|\n)function \w+\(.*\)/g, 'async $&')}\n})();`
-        } else {
-            if (Blockly.JavaScript.forBlock['procedures_callreturn'] != asyncSuppport.defaultGenerator) {
-                Blockly.JavaScript.forBlock['procedures_callreturn'] = asyncSuppport.defaultGenerator;
-                code = Blockly.JavaScript.workspaceToCode(workspace);
-            }
-            return code;
-        }
+        } else return code;
     }
 }
 
@@ -202,7 +195,7 @@ function run(event) {
         }
     };
     var code = Blockly.JavaScript.workspaceToCode(workspace);
-    Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
+    Blockly.JavaScript.INFINITE_LOOP_TRAP = null;   // 每次都重置循环超时的检测
     code = asyncSuppport.asyncCheck(code);
     try {
         console.log(code)
