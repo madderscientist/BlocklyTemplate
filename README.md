@@ -26,3 +26,6 @@
 一开始用unpkg版本开发，发现自带的变量系统不好，于是找到AppInventor同款变量插件：lexicalVariable，但是用的是es6。于是迁移到npm开发。迁移过程中学会了webpack，但是我不喜欢这种开发模式，因为不够轻量、不够简洁，而且还有bug。做到一半，我决定把lexicalVariable打包为es5，一试竟然成功（详见lexicalVariable_plugin_webpack文件夹的README）。于是开开心心抛弃npm版，回归web版开发。<br>
 于是将目光转向其他插件，同样顺利地打包了backpack插件。<br>
 所以，blocklyTemplate_web是完全体，blocklyTemplate_npm是半成品。Github Page提供的正是web版的Blockly项目。
+
+## bug
+详见[lexicalVariable](lexicalVariable_plugin_webpack\README.md)最后的todo，目前不能将变量名定义为关键字。

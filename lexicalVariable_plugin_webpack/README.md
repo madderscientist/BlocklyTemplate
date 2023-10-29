@@ -126,3 +126,15 @@ export {Substitution} from './substitution.js'
 7. 修改controls_forEach的代码生成
 应为2023/10/22加入了字典，数组也可以设置属性了。
 源码用了 for in 遍历列表，但是这样可能会导致遍历了属性。用 for of 可以避免。
+
+## todo
+- lexicalVariable_plugin_webpack\generators\lexical-variables.js 中有bug，写在第10行的注释
+- lexicalVariable_plugin_webpack\shared.js 中的bug写在27行的注释
+问题是前缀混乱丢失，导致定义为关键词不会自动更改。<br>
+2023/10/29尝试用以下代码解决：
+```js
+generator.nameDB_.getDistinctName('可能非法的变量名', Blockly.Names.NameType.VARIABLE);
+```
+解决失败，因为此方法保证每次调用得到的都不一样。<br>
+解决方法有两个，一是解决这个插件的bug，二是走blockly的变量系统，得到一个不冲突的名字（尚不知道支不支持）<br>
+所以当前还是不能定义为关键字

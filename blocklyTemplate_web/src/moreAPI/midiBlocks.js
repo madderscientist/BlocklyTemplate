@@ -452,7 +452,7 @@
         Blockly.JavaScript.forBlock[block['type']] = block['JavaScript'];
     }
 
-    // 关键词添加 但lexicalVariable不走nameDB，而是添加前缀
+    // 关键词添加 但lexicalVariable不走nameDB，而是添加前缀，但有bug，见lexicalVariable文件夹的readme。所以这样添加关键词暂时没用
     Blockly.JavaScript.addReservedWords('midi,mtrk,midiEvent'); // 相当于Blockly.JavaScript.RESERVED_WORDS_+='midi,mtrk,midiEvent,';
 
     // 插入toolbox

@@ -34,7 +34,7 @@
         var FieldValue = block.getFieldValue('X');      // 用于输入不是块的，见：https://developers.google.com/blockly/guides/create-custom-blocks/fields/built-in-fields/overview
         var dropdown = block.getFieldValue('END') == 'FIRST' ? 'indexOf' : 'lastIndexOf';   // 下拉菜单的返回值是FIRST之类的通用语言 如果像上面C4那样有两项则返回列表第二项
         var variable = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('VAR'), Blockly.Variables.NAME_TYPE);     // 对于变量下拉列表，为了防止变量名用了关键词，用此方法消除
-        var listVar = generator.nameDB_.getDistinctName('可能非法的变量名', Blockly.names.NameType.VARIABLE);      // 可能需要增加过程变量。防止变量名冲突用此方法
+        var listVar = generator.nameDB_.getDistinctName('可能非法的变量名', Blockly.Names.NameType.VARIABLE);      // 可能需要增加过程变量。防止变量名冲突用此方法
         var code = 'var ' + listVar + ' = ' + arg0 + ';\n';
         var InputValue = Blockly.JavaScript.valueToCode(block, 'Y', Blockly.JavaScript.ORDER_ATOMIC) || '0';   // 得到相连的块的值。优先级就这样配置，取值用最高优先级，返回用最低优先级 https://blockly.tortorse.com/guides/create-custom-blocks/operator-precedence.html
         return [`${FieldValue}+${InputValue}`, Blockly.JavaScript.ORDER_NONE];      // 为了考虑级联，(must)返回列表，第一项是代码文本，第二项是运算优先级（括号）

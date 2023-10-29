@@ -7,6 +7,7 @@ import * as Shared from '../shared.js';
  * @return {string}
  */
 function getVariableName(name) {
+  // 有bug：name需要有前缀，下面这个函数是把前缀拆出来的，但传参没有前缀，因为getFieldValue得到的就没有前缀。而这源于下拉框没有前缀
   const pair = Shared.unprefixName(name);
   const prefix = pair[0];
   const unprefixedName = pair[1];

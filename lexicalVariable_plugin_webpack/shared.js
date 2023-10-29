@@ -24,8 +24,9 @@ import './msg.js';
 
 */
 
+// 这俩改为true就是有bug，体现在下拉框选项没有前缀。估计是下拉框的问题
 export const showPrefixToUser = false;
-export const usePrefixInCode = true;
+export const usePrefixInCode = false;
 
 /** ****************************************************************************
  [lyn, 12/23-27/2012, patch 16]
