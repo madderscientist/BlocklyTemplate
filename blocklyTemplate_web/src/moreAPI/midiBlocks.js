@@ -452,6 +452,9 @@
         Blockly.JavaScript.forBlock[block['type']] = block['JavaScript'];
     }
 
+    // 关键词添加 但lexicalVariable不走nameDB，而是添加前缀
+    Blockly.JavaScript.addReservedWords('midi,mtrk,midiEvent'); // 相当于Blockly.JavaScript.RESERVED_WORDS_+='midi,mtrk,midiEvent,';
+
     // 插入toolbox
     if (toolbox.contents.length == 10) {     // 加一条分界线，以区分基本库和扩展库
         toolbox.contents.push({

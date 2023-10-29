@@ -25,7 +25,7 @@ import './msg.js';
 */
 
 export const showPrefixToUser = false;
-export const usePrefixInCode = false;
+export const usePrefixInCode = true;
 
 /** ****************************************************************************
  [lyn, 12/23-27/2012, patch 16]

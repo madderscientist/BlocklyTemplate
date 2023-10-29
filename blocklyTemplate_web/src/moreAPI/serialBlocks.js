@@ -210,7 +210,7 @@
             `      if (${data}.done) break;\n      ${data} = ${data}.value;\n` +
             `      ${onGet}    }\n` +
             "  } catch(e) {\n    console.log(e);\n  } finally {\n    tempSerial.reader.releaseLock();\n    tempSerial.close();\n  }\n})();\n} // SerialConnect over\n";
-    }
+    };
 
     // 插入toolbox
     if (toolbox.contents.length == 10) {     // 加一条分界线，以区分基本库和扩展库
