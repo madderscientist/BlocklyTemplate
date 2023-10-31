@@ -24,7 +24,14 @@ blockly项目模板，使用unpkg。本项目有如下特点：
 
 ## 设计时的权衡
 匿名函数：用定义函数+取函数代替<br>
-异步操作：在不修改源码的条件下，用正则表达式将所有函数声明全部变为async。而await由块的genetator提供。详见main.js的asyncSuppport变量。
+2023/10/23 更新 异步解决方案：<br>
+- 之前的解决方法：用正则表达式将所有函数声明全部变为async。而await由块的genetator提供。非常粗暴地全部替换。
+- 问题：新增了列表的自定义排序规则块，需要引用函数，但是用async修饰的函数无法用于排序。
+- 解决思路；有必要将定义的函数区分对待。
+- 尝试1：通过检查Blockly.JavaScript.definitions_（源码里将函数定义缓存到这了），得到函数定义。第二次生成时将含await的函数的名字替换为async函数名。
+- 结果：失败。似乎每次生成结束会清空这个变量。
+- 尝试2：重载函数定义生成源码。通过查看github提交历史得到了js定义，改为在生成代码时就检查异步，相当于开辟了一个新的Blockly.JavaScript.definitions_来缓存定义。其他同尝试1。
+- 结果：经历了许多bug最终成功了。需要注意还重载了controls_do_then_return的生成逻辑。相关细节在blocklyTemplate_web\src\asyncSupport.js中
 
 ## 如何继续拓展功能
 - 拓展基本库：extraBlocks.js中的extraBlocks添加块的json定义，在定义的“JavaScript”字段添加生成方法
