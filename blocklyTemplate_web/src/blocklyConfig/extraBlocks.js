@@ -478,6 +478,32 @@
                 return `${l}.splice(${at}-1,${deleteNum},${adds.join(',')});\n`;  // blockly的逻辑是从1开始
             }
         }, {
+            "type": "lists_sort_diy",
+            "message0": "%{BKY_LISTS_SORT_DIY}",
+            "args0": [
+                {
+                    "type": "input_value",
+                    "name": "list",
+                    "check": "Array",
+                    "align": "RIGHT"
+                }, {
+                    "type": "input_value",
+                    "name": "rule",
+                    "align": "RIGHT"
+                }
+            ],
+            "previousStatement": null,
+            "nextStatement": null,
+            "style": "list_blocks",
+            "helpUrl": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort",
+            "tooltip": "Array.sort() 自定义排序规则\n请保证其有两个传入参数，输出为一个数字",
+            "inputsInline": false,
+            "JavaScript": function (block, generator) {
+                let l = generator.valueToCode(block, 'list', generator.ORDER_ATOMIC);
+                let r = generator.valueToCode(block, 'rule', generator.ORDER_ATOMIC);
+                return `${l}.sort(${r});\n`;
+            }
+        }, {
             "type": "lists_concat",
             "message0": "%{BKY_LISTS_CONCAT}",
             'mutator': 'Arrayitems_mutator',

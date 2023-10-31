@@ -1,6 +1,6 @@
 import * as Blockly from 'blockly/core';
 ;(function(){
-    const javascriptGenerator = Blockly.JavaScript;
+  const javascriptGenerator = Blockly.JavaScript;
   /**
    * @param {Blockly.Block} block The block to generate code for.
    * @return {string} The generated code.
@@ -19,3 +19,4 @@ import * as Blockly from 'blockly/core';
     return [code, javascriptGenerator.ORDER_FUNCTION_CALL];
   };
 })();
+// 为什么没有callnoreturn?因为会调用forBlock['procedures_callnoreturn'] = function (block,generator) {return generator.forBlock.procedures_callreturn(block,generator)[0]+";\n"}

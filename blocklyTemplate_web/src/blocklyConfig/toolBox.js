@@ -693,6 +693,10 @@ const toolbox = {
                 },
                 {
                     "kind": "block",
+                    "type": "lists_sort_diy"
+                },
+                {
+                    "kind": "block",
                     "type": "lists_reverse"
                 }
             ]

@@ -415,16 +415,16 @@
                 {
                     "type": "input_value",
                     "name": "Midi",
-                    "check": "Midi",
+                    "check": ["Midi", "Mtrk"],
                     "align": "RIGHT"
                 }
             ],
             "output": "String",
             "style": "midi_blocks",
-            "tooltip": "导出midi为JSON",
+            "tooltip": "整理midi或音轨的数据为易于理解的字典对象",
             "JavaScript": function (block, generator) {
                 let midi = generator.valueToCode(block, 'Midi', generator.ORDER_ATOMIC);
-                return [`${midi}.toJSON()`, generator.ORDER_NONE];
+                return [`${midi}.toJSON(0)`, generator.ORDER_NONE];
             }
         },
     ];
@@ -444,7 +444,7 @@
     Blockly.Msg["MIDI_EVENT_TEMPO"] = "更改速度事件 时刻%1bpm速度%2";
     Blockly.Msg["MIDI_EXPORT"] = "导出midi%1为文件数据";
     Blockly.Msg["MIDI_DOWNLOAD"] = "将midi数据%1下载为文件%2";
-    Blockly.Msg["MIDI_TOJSON"] = "导出midi%1为JSON";
+    Blockly.Msg["MIDI_TOJSON"] = "整理%1为字典";
 
     Blockly.defineBlocksWithJsonArray(midiBlocks);
     // 代码生成器
@@ -452,7 +452,7 @@
         Blockly.JavaScript.forBlock[block['type']] = block['JavaScript'];
     }
 
-    // 关键词添加 但lexicalVariable不走nameDB，而是添加前缀，但有bug，见lexicalVariable文件夹的readme。所以这样添加关键词暂时没用
+    // 保留词添加 放弃了lexicalVariable的前缀变量系统，用Blockly.JavaScript.nameDB_.getName，因此保留词很重要
     Blockly.JavaScript.addReservedWords('midi,mtrk,midiEvent'); // 相当于Blockly.JavaScript.RESERVED_WORDS_+='midi,mtrk,midiEvent,';
 
     // 插入toolbox

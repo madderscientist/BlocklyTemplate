@@ -8,14 +8,19 @@ import * as Shared from '../shared.js';
  */
 function getVariableName(name) {
   // 有bug：name需要有前缀，下面这个函数是把前缀拆出来的，但传参没有前缀，因为getFieldValue得到的就没有前缀。而这源于下拉框没有前缀
+  // 2023/10/31解决：使用Blockly.JavaScript.nameDB_.getName，放弃前缀系统
   const pair = Shared.unprefixName(name);
   const prefix = pair[0];
   const unprefixedName = pair[1];
   if (prefix === Blockly.Msg.LANG_VARIABLES_GLOBAL_PREFIX ||
       prefix === Shared.GLOBAL_KEYWORD) {
-    return unprefixedName;
+    return Blockly.JavaScript.nameDB_.getName(
+      unprefixedName,
+      Blockly.Names.NameType.VARIABLE);
   } else {
-    return (Shared.possiblyPrefixGeneratedVarName(prefix))(unprefixedName);
+    return Blockly.JavaScript.nameDB_.getName(
+      (Shared.possiblyPrefixGeneratedVarName(prefix))(unprefixedName),
+      Blockly.Names.NameType.VARIABLE);
   }
 }
 
@@ -52,8 +57,8 @@ function getVariableName(name) {
   function generateDeclarations(block) {
     let code = '{\n  let ';
     for (let i = 0; block.getFieldValue('VAR' + i); i++) {
-      code += (Shared.usePrefixInCode ? 'local_' : '') +
-          block.getFieldValue('VAR' + i);
+      code += Blockly.JavaScript.nameDB_.getName((Shared.usePrefixInCode ? 'local_' : '') +
+          block.getFieldValue('VAR' + i), 'VARIABLE');
       code += ' = ' + (javascriptGenerator.valueToCode(block,
           'DECL' + i, javascriptGenerator.ORDER_NONE) || '0');
       code += ', ';

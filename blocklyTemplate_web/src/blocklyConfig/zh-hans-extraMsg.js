@@ -24,6 +24,7 @@ Blockly.Msg["CONTROLS_INTERVAL"] = "每隔%1毫秒";
 Blockly.Msg["CONTROLS_CLEAR_CLK"] = "清除计时%1";
 Blockly.Msg["LISTS_ISARRAY"] = "是否为列表";
 Blockly.Msg["LISTS_PUSH"] = "在列表%1尾部插入";
+Blockly.Msg["LISTS_SORT_DIY"] = "排序%1自定义规则%2";
 Blockly.Msg["LISTS_CONCAT"] = "连接列表";
 Blockly.Msg["DICTIONARIES_CONCAT"] = "合并字典";
 Blockly.Msg["LISTS_SPLICE"] = "于列表%1位置%2删除元素数目%3并添加如下元素";
